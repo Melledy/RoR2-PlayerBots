@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayerBots", "PlayerBots\PlayerBots.csproj", "{9304AB08-27E9-4B2E-97A2-8AE8060444E9}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "Utilities\Utilities.shproj", "{6189BDE4-E024-4872-B6C3-B5CA2C4FCDE5}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Utilities\Utilities.projitems*{6189bde4-e024-4872-b6c3-b5ca2c4fcde5}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9304AB08-27E9-4B2E-97A2-8AE8060444E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9304AB08-27E9-4B2E-97A2-8AE8060444E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9304AB08-27E9-4B2E-97A2-8AE8060444E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9304AB08-27E9-4B2E-97A2-8AE8060444E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B7E557E-052F-4724-AF06-06EE44E97A99}
+	EndGlobalSection
+EndGlobal
