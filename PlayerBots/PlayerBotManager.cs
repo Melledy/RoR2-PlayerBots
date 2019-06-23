@@ -105,7 +105,10 @@ namespace PlayerBots
                         }
                     }
                 };
+            }
 
+            if (AutoPurchaseItems.Value)
+            {
                 On.RoR2.Run.BeginStage += (orig, self) =>
                 {
                     foreach (GameObject playerbot in playerbots.ToArray())
@@ -126,7 +129,7 @@ namespace PlayerBots
                     orig(self);
                 };
             }
-
+            
             if (TreatBotsAsPlayers.Value)
             {
                 On.RoR2.Stage.Start += (orig, self) => {
