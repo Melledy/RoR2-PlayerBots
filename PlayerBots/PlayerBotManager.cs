@@ -77,7 +77,7 @@ namespace PlayerBots
                 };
             }
 
-            if (TreatBotsAsPlayers.Value || !AutoPurchaseItems.Value)
+            if (!TreatBotsAsPlayers.Value && AutoPurchaseItems.Value)
             {
                 // Give bots money
                 On.RoR2.TeamManager.GiveTeamMoney += (orig, self, teamIndex, money) =>
