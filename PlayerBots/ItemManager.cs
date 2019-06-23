@@ -56,6 +56,11 @@ namespace PlayerBots
 
         private void CheckBuy()
         {
+            if (!master.alive)
+            {
+                return;
+            }
+
             // Max purchases for this map reached
             if (this.purchases >= this.maxPurchases)
             {
