@@ -11,9 +11,10 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "0.0.4")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
+        public static System.Random random = new System.Random();
         public static List<GameObject> playerbots = new List<GameObject>();
         public static List<string> bodyList = new List<string> {
             "CommandoBody",
@@ -23,6 +24,19 @@ namespace PlayerBots
             "MageBody",
             "MercBody",
         };
+        public static List<string> bodyProperNameList = new List<string> {
+            "Commando",
+            "MULT",
+            "Huntress",
+            "Engineer",
+            "Artificer",
+            "Mercenary",
+        };
+
+        public static Dictionary<string, int> bodyDict = new Dictionary<string, int>();
+
+        private static ConfigWrapper<int> InitialRandomBots { get; set; }
+        private static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[bodyProperNameList.Count];
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
         private static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
@@ -32,7 +46,27 @@ namespace PlayerBots
 
         public void Awake()
         {
+            bodyDict.Add("commando", 0);
+            bodyDict.Add("mult", 1);
+            bodyDict.Add("mul-t", 1);
+            bodyDict.Add("toolbot", 1);
+            bodyDict.Add("huntress", 2);
+            bodyDict.Add("engi", 3);
+            bodyDict.Add("engineer", 3);
+            bodyDict.Add("mage", 4);
+            bodyDict.Add("arti", 4);
+            bodyDict.Add("artificer", 4);
+            bodyDict.Add("merc", 5);
+            bodyDict.Add("mercenary", 5);
+
             // Config
+            InitialRandomBots = Config.Wrap("Initial Bots", "InitialRandomBots", "Initial bots to spawn at the start of a run. (Random)", 0);
+            for (int i = 0; i < bodyProperNameList.Count; i++ )
+            {
+                string name = bodyProperNameList[i];
+                InitialBots[i] = Config.Wrap("Initial Bots", "Initial" + name + "Bots", "Initial bots to spawn at the start of a run. (" + name + ")", 0);
+            }
+            
             AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of putchases a playerbot can do per stage.", true);
             MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 8);
 
@@ -130,11 +164,13 @@ namespace PlayerBots
                 };
             }
             
-            if (TreatBotsAsPlayers.Value)
+            
+            On.RoR2.Stage.Start += (orig, self) => 
             {
-                On.RoR2.Stage.Start += (orig, self) => {
-                    orig(self);
-                    if (NetworkServer.active)
+                orig(self);
+                if (NetworkServer.active)
+                {
+                    if (TreatBotsAsPlayers.Value)
                     {
                         foreach (GameObject playerbot in playerbots.ToArray())
                         {
@@ -151,12 +187,27 @@ namespace PlayerBots
                             }
                         }
                     }
-                };
-            }
+                    if (Run.instance.stageClearCount == 0)
+                    {
+                        if (InitialRandomBots.Value > 0)
+                        {
+                            SpawnRandomPlayerbots(NetworkUser.readOnlyInstancesList[0].master, InitialRandomBots.Value);
+                        }
+                        for (int characterType = 0; characterType < InitialBots.Length; characterType++)
+                        {
+                            if (InitialBots[characterType].Value > 0)
+                            {
+                                SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, characterType, InitialBots[characterType].Value);
+                            }
+                        }
+                    }
+                }
+            };
+  
         }
 
         // Also really hacky
-        public static void SpawnPlayerbot(CharacterBody body, int characterType)
+        public static void SpawnPlayerbot(CharacterMaster owner, int characterType)
         {
             GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(bodyList[characterType]);
             if (bodyPrefab == null)
@@ -170,7 +221,7 @@ namespace PlayerBots
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                 minDistance = 3f,
                 maxDistance = 40f,
-                spawnOnTarget = body.transform
+                spawnOnTarget = owner.GetBody().transform
             }, RoR2Application.rng);
 
             if (gameObject)
@@ -191,10 +242,10 @@ namespace PlayerBots
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
 
-                    master.teamIndex = TeamComponent.GetObjectTeam(body.gameObject);
+                    master.teamIndex = TeamIndex.Player;
 
-                    master.GiveMoney(body.master.money);
-                    master.inventory.CopyItemsFrom(body.master.inventory);
+                    master.GiveMoney(owner.money);
+                    master.inventory.CopyItemsFrom(owner.inventory);
 
                     master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
 
@@ -208,12 +259,12 @@ namespace PlayerBots
                 }
                 if (aiOwnership)
                 {
-                    aiOwnership.ownerMaster = body.master;
+                    aiOwnership.ownerMaster = owner;
                 }
                 if (ai)
                 {
                     ai.name = "PlayerBot";
-                    ai.leader.gameObject = body.gameObject;
+                    ai.leader.gameObject = owner.GetBody().gameObject;
 
                     ai.fullVision = true;
                     ai.aimVectorDampTime = .01f;
@@ -261,6 +312,32 @@ namespace PlayerBots
 
                 // Add to playerbot list
                 playerbots.Add(gameObject);
+            }
+        }
+
+        public static void SpawnPlayerbots(CharacterMaster owner, int characterType, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                SpawnPlayerbot(owner, characterType);
+            }
+        }
+
+        public static void SpawnRandomPlayerbots(CharacterMaster owner, int amount)
+        {
+            int lastCharacterType = -1;
+            for (int i = 0; i < amount; i++)
+            {
+                int characterType = -1;
+                do
+                {
+                    characterType = random.Next(0, bodyList.Count);
+                }
+                while (characterType == lastCharacterType && bodyList.Count > 1);
+
+                SpawnPlayerbot(owner, characterType);
+
+                lastCharacterType = characterType;
             }
         }
 
@@ -337,7 +414,13 @@ namespace PlayerBots
             if (args.userArgs.Count > 0)
             {
                 string classString = args.userArgs[0];
-                Int32.TryParse(classString, out characterType);
+                if (!Int32.TryParse(classString, out characterType))
+                {
+                    if (!bodyDict.TryGetValue(classString.ToLower(), out characterType))
+                    {
+                        characterType = 0;
+                    }
+                }
 
                 // Clamp
                 characterType = Math.Max(Math.Min(characterType, bodyList.Count - 1), 0);
@@ -354,10 +437,16 @@ namespace PlayerBots
             {
                 int userIndex = 0;
                 string userString = args.userArgs[2];
-                Int32.TryParse(userString, out userIndex);
-                if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
+                if (Int32.TryParse(userString, out userIndex))
                 {
-                    user = NetworkUser.readOnlyInstancesList[userIndex];
+                    if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
+                    {
+                        user = NetworkUser.readOnlyInstancesList[userIndex];
+                    }
+                }
+                else
+                {
+                    return;
                 }
             }
 
@@ -366,13 +455,7 @@ namespace PlayerBots
                 return;
             }
 
-            CharacterBody body = user.master.GetBody();
-            System.Random random = new System.Random();
-
-            for (int i = 0; i < amount; i++)
-            {
-                SpawnPlayerbot(body, characterType);
-            }
+            SpawnPlayerbots(user.master, characterType, amount);
         }
 
         [ConCommand(commandName = "addrandombot", flags = ConVarFlags.ExecuteOnServer, helpText = "Adds a random playerbot. Usage: addrandombot [amount] [network user index]")]
@@ -403,10 +486,16 @@ namespace PlayerBots
             {
                 int userIndex = 0;
                 string userString = args.userArgs[1];
-                Int32.TryParse(userString, out userIndex);
-                if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
+                if (Int32.TryParse(userString, out userIndex))
                 {
-                    user = NetworkUser.readOnlyInstancesList[userIndex];
+                    if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
+                    {
+                        user = NetworkUser.readOnlyInstancesList[userIndex];
+                    }
+                }
+                else
+                {
+                    return;
                 }
             }
 
@@ -415,23 +504,7 @@ namespace PlayerBots
                 return;
             }
 
-            CharacterBody body = user.master.GetBody();
-            System.Random random = new System.Random();
-
-            int lastCharacterType = -1;
-            for (int i = 0; i < amount; i++)
-            {
-                int characterType = -1;
-                do
-                {
-                    characterType = random.Next(0, bodyList.Count);
-                }
-                while (characterType == lastCharacterType && bodyList.Count > 1);
-
-                SpawnPlayerbot(body, characterType);
-
-                lastCharacterType = characterType;
-            }
+            SpawnRandomPlayerbots(user.master, amount);
         }
 
         [ConCommand(commandName = "removebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
@@ -462,6 +535,74 @@ namespace PlayerBots
 
         }
 
+        [ConCommand(commandName = "setinitialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
+        private static void CCInitialBot(ConCommandArgs args)
+        {
+            int characterType = 0;
+            if (args.userArgs.Count > 0)
+            {
+                string classString = args.userArgs[0];
+                if (!Int32.TryParse(classString, out characterType))
+                {
+                    if (!bodyDict.TryGetValue(classString.ToLower(), out characterType))
+                    {
+                        characterType = 0;
+                    }
+                }
+
+                // Clamp
+                characterType = Math.Max(Math.Min(characterType, bodyList.Count - 1), 0);
+            }
+            else
+            {
+                return;
+            }
+
+            int amount = 0;
+            if (args.userArgs.Count > 1)
+            {
+                string amountString = args.userArgs[1];
+                Int32.TryParse(amountString, out amount);
+            }
+            else
+            {
+                return;
+            }
+
+            InitialBots[characterType].Value = amount;
+            Debug.Log("Set initial " + bodyProperNameList[characterType] + " bots to " + amount);
+        }
+
+        [ConCommand(commandName = "setinitialrandombots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
+        private static void CCInitialRandomBot(ConCommandArgs args)
+        {
+            int amount = 0;
+            if (args.userArgs.Count > 0)
+            {
+                string amountString = args.userArgs[0];
+                Int32.TryParse(amountString, out amount);
+            }
+            else
+            {
+                return;
+            }
+
+            InitialRandomBots.Value = amount;
+            Debug.Log("Set initial random bots to " + amount);
+        }
+
+        [ConCommand(commandName = "clearinitialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Resets all initial bots to 0")]
+        private static void CCClearInitialBot(ConCommandArgs args)
+        {
+            InitialRandomBots.Value = 0;
+            for (int i = 0; i < InitialBots.Length; i++)
+            {
+                InitialBots[i].Value = 0;
+            }
+            Debug.Log("Reset all initial bots to 0");
+        }
+
+        /*
         [ConCommand(commandName = "testbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Testing Command")]
         private static void CCTestBots(ConCommandArgs args)
         {
@@ -496,5 +637,6 @@ namespace PlayerBots
                 Debug.Log(name + "'s money: " + master.money);
             }
         }
+        */
     }
 }
