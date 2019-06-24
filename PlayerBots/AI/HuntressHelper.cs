@@ -37,7 +37,7 @@ namespace PlayerBots.AI
             skill4.maxDistance = 90;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = true;
-            skill4.activationRequiresAimConfirmation = false;
+            skill4.activationRequiresAimConfirmation = true;
             skill4.movementType = AISkillDriver.MovementType.Stop;
             skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill4.ignoreNodeGraph = false;

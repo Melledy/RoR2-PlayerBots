@@ -89,7 +89,7 @@ namespace PlayerBots.AI
             skill1.maxDistance = 10;
             skill1.selectionRequiresTargetLoS = true;
             skill1.activationRequiresTargetLoS = true;
-            skill1.activationRequiresAimConfirmation = true;
+            skill1.activationRequiresAimConfirmation = false;
             skill1.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
             skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill1.ignoreNodeGraph = true;
@@ -99,20 +99,6 @@ namespace PlayerBots.AI
 
             // Add default skills
             AddDefaultSkills(gameObject, ai);
-
-            /*
-            // Inject
-            AISkillDriver[] skills = gameObject.GetComponent<BaseAI>().GetFieldValue<AISkillDriver[]>("skillDrivers");
-
-            List<AISkillDriver> skillsList = new List<AISkillDriver>(skills);
-            skillsList.Insert(0, skill1);
-            skillsList.Insert(0, skill5);
-            skillsList.Insert(0, skill2);
-            skillsList.Insert(0, skill4);
-            skillsList.Insert(0, skill3);
-
-            baseAI.SetFieldValue("skillDrivers", skillsList.ToArray());
-            */
         }
     }
 }

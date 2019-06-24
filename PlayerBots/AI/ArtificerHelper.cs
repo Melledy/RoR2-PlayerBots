@@ -19,9 +19,9 @@ namespace PlayerBots.AI
             skill3.minDistance = 0;
             skill3.maxDistance = 50;
             skill3.maxTargetHealthFraction = .5f;
-            skill3.selectionRequiresTargetLoS = false;
-            skill3.activationRequiresTargetLoS = false;
-            skill3.activationRequiresAimConfirmation = false;
+            skill3.selectionRequiresTargetLoS = true;
+            skill3.activationRequiresTargetLoS = true;
+            skill3.activationRequiresAimConfirmation = true;
             skill3.movementType = AISkillDriver.MovementType.StrafeMovetarget;
             skill3.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill3.ignoreNodeGraph = false;

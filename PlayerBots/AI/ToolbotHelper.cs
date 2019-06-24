@@ -34,10 +34,10 @@ namespace PlayerBots.AI
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
             skill3.maxDistance = 100;
-            skill3.minUserHealthFraction = .6f;
+            skill3.minUserHealthFraction = .7f;
             skill3.selectionRequiresTargetLoS = true;
-            skill3.activationRequiresTargetLoS = true;
-            skill3.activationRequiresAimConfirmation = true;
+            skill3.activationRequiresTargetLoS = false;
+            skill3.activationRequiresAimConfirmation = false;
             skill3.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
             skill3.aimType = AISkillDriver.AimType.MoveDirection;
             skill3.ignoreNodeGraph = false;
@@ -49,7 +49,7 @@ namespace PlayerBots.AI
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill1.customName = "Nailgun";
             skill1.skillSlot = RoR2.SkillSlot.Primary;
-            skill1.requireSkillReady = true;
+            skill1.requireSkillReady = false;
             skill1.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill1.minDistance = 0;
             skill1.maxDistance = 40;
@@ -57,7 +57,7 @@ namespace PlayerBots.AI
             skill1.activationRequiresTargetLoS = true;
             skill1.activationRequiresAimConfirmation = true;
             skill1.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill1.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill1.ignoreNodeGraph = false;
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;
