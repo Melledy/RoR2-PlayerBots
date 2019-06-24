@@ -164,7 +164,6 @@ namespace PlayerBots
                 };
             }
             
-            
             On.RoR2.Stage.Start += (orig, self) => 
             {
                 orig(self);
@@ -203,7 +202,29 @@ namespace PlayerBots
                     }
                 }
             };
-  
+
+            if (TreatBotsAsPlayers.Value)
+            {
+                On.RoR2.RunReport.Generate += (orig, run, resultType) =>
+                {
+                    foreach (GameObject playerbot in playerbots.ToArray())
+                    {
+                        if (!playerbot)
+                        {
+                            playerbots.Remove(playerbot);
+                            continue;
+                        }
+
+                        PlayerCharacterMasterController masterController = playerbot.GetComponent<PlayerCharacterMasterController>();
+                        if (masterController)
+                        {
+                            DestroyImmediate(masterController);
+                        }
+                    }
+                    return orig(run, resultType);
+                };
+            }
+ 
         }
 
         // Also really hacky
