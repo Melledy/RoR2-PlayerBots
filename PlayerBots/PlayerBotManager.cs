@@ -67,13 +67,13 @@ namespace PlayerBots
                 InitialBots[i] = Config.Wrap("Initial Bots", "Initial" + name + "Bots", "Initial bots to spawn at the start of a run. (" + name + ")", 0);
             }
             
-            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of putchases a playerbot can do per stage.", true);
+            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
             MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 8);
 
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
-            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots.", true);
+            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots. (Host only)", true);
 
-            TreatBotsAsPlayers = Config.Wrap("Experimental", "TreatBotsAsPlayers", "VERY BUGGY. ENABLE AT YOUR OWN RISK. Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+            TreatBotsAsPlayers = Config.Wrap("Experimental", "TreatBotsAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
 
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
@@ -560,7 +560,7 @@ namespace PlayerBots
 
         }
 
-        [ConCommand(commandName = "setinitialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
+        [ConCommand(commandName = "pb_initialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
         private static void CCInitialBot(ConCommandArgs args)
         {
             int characterType = 0;
@@ -598,7 +598,7 @@ namespace PlayerBots
             Debug.Log("Set initial " + bodyProperNameList[characterType] + " bots to " + amount);
         }
 
-        [ConCommand(commandName = "setinitialrandombots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
+        [ConCommand(commandName = "pb_initialbots_random", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
         private static void CCInitialRandomBot(ConCommandArgs args)
         {
             int amount = 0;
@@ -616,7 +616,7 @@ namespace PlayerBots
             Debug.Log("Set initial random bots to " + amount);
         }
 
-        [ConCommand(commandName = "clearinitialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Resets all initial bots to 0")]
+        [ConCommand(commandName = "pb_initialbots_clear", flags = ConVarFlags.SenderMustBeServer, helpText = "Resets all initial bots to 0")]
         private static void CCClearInitialBot(ConCommandArgs args)
         {
             InitialRandomBots.Value = 0;
