@@ -237,13 +237,17 @@ namespace PlayerBots
             }
 
             SpawnCard card = (SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly");
-            GameObject gameObject = DirectorCore.instance.TrySpawnObject(card, new DirectorPlacementRule
+            DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
             {
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                 minDistance = 3f,
                 maxDistance = 40f,
                 spawnOnTarget = owner.GetBody().transform
             }, RoR2Application.rng);
+            spawnRequest.ignoreTeamMemberLimit = true;
+            spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
+            
+            GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
 
             if (gameObject)
             {
