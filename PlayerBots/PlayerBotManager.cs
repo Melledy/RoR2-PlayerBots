@@ -23,6 +23,7 @@ namespace PlayerBots
             "EngiBody",
             "MageBody",
             "MercBody",
+            "TreebotBody",
         };
         public static List<string> bodyProperNameList = new List<string> {
             "Commando",
@@ -31,6 +32,7 @@ namespace PlayerBots
             "Engineer",
             "Artificer",
             "Mercenary",
+            "REX",
         };
 
         public static Dictionary<string, int> bodyDict = new Dictionary<string, int>();
@@ -58,6 +60,8 @@ namespace PlayerBots
             bodyDict.Add("artificer", 4);
             bodyDict.Add("merc", 5);
             bodyDict.Add("mercenary", 5);
+            bodyDict.Add("rex", 6);
+            bodyDict.Add("treebot", 6);
 
             // Config
             InitialRandomBots = Config.Wrap("Initial Bots", "InitialRandomBots", "Initial bots to spawn at the start of a run. (Random)", 0);
@@ -322,6 +326,9 @@ namespace PlayerBots
                         break;
                     case 5:
                         MercenaryHelper.InjectSkills(gameObject, ai);
+                        break;
+                    case 6:
+                        REXHelper.InjectSkills(gameObject, ai);
                         break;
                 }
 
