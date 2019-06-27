@@ -62,7 +62,7 @@ namespace PlayerBots
             }
 
             // Max purchases for this map reached
-            if (this.purchases >= this.maxPurchases)
+            if (this.purchases >= PlayerBotManager.MaxBotPurchasesPerStage.Value)
             {
                 return;
             }

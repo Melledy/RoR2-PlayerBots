@@ -64,11 +64,11 @@ namespace PlayerBots
             bodyDict.Add("treebot", 6);
 
             // Config
-            InitialRandomBots = Config.Wrap("Initial Bots", "InitialRandomBots", "Initial bots to spawn at the start of a run. (Random)", 0);
+            InitialRandomBots = Config.Wrap("Initial Bots", "InitialRandomBots", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
             for (int i = 0; i < bodyProperNameList.Count; i++ )
             {
                 string name = bodyProperNameList[i];
-                InitialBots[i] = Config.Wrap("Initial Bots", "Initial" + name + "Bots", "Initial bots to spawn at the start of a run. (" + name + ")", 0);
+                InitialBots[i] = Config.Wrap("Initial Bots", "Initial" + name + "Bots", "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
             }
             
             AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
@@ -632,6 +632,24 @@ namespace PlayerBots
                 InitialBots[i].Value = 0;
             }
             Debug.Log("Reset all initial bots to 0");
+        }
+
+        [ConCommand(commandName = "pb_maxpurchases", flags = ConVarFlags.SenderMustBeServer, helpText = "Sets the MaxBotPurchasesPerStage value.")]
+        private static void CCSetMaxPurchases(ConCommandArgs args)
+        {
+            int amount = 0;
+            if (args.userArgs.Count > 0)
+            {
+                string amountString = args.userArgs[0];
+                Int32.TryParse(amountString, out amount);
+            }
+            else
+            {
+                return;
+            }
+
+            MaxBotPurchasesPerStage.Value = amount;
+            Debug.Log("Set MaxBotPurchasesPerStage to " + amount);
         }
 
         /*
