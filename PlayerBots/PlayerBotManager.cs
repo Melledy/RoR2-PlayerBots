@@ -1,8 +1,13 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using EntityStates;
+using EntityStates.AI.Walker;
 using PlayerBots.AI;
+using PlayerBots.Custom;
 using RoR2;
 using RoR2.CharacterAI;
+using RoR2.Navigation;
+using RoR2.Stats;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,70 +20,54 @@ namespace PlayerBots
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
-        public static List<GameObject> playerbots = new List<GameObject>();
-        public static List<string> bodyList = new List<string> {
-            "CommandoBody",
-            "ToolbotBody",
-            "HuntressBody",
-            "EngiBody",
-            "MageBody",
-            "MercBody",
-            "TreebotBody",
-        };
-        public static List<string> bodyProperNameList = new List<string> {
-            "Commando",
-            "MULT",
-            "Huntress",
-            "Engineer",
-            "Artificer",
-            "Mercenary",
-            "REX",
-        };
 
-        public static Dictionary<string, int> bodyDict = new Dictionary<string, int>();
+        public static List<GameObject> playerbots = new List<GameObject>();
+
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engineer, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot};
+        public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         private static ConfigWrapper<int> InitialRandomBots { get; set; }
-        private static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[bodyProperNameList.Count];
+        private static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[RandomSurvivors.Length];
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
         private static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
-        private static ConfigWrapper<bool> TreatBotsAsPlayers { get; set; }
+        private static ConfigWrapper<bool> SpawnAsPlayers { get; set; }
 
         public void Awake()
         {
-            bodyDict.Add("commando", 0);
-            bodyDict.Add("mult", 1);
-            bodyDict.Add("mul-t", 1);
-            bodyDict.Add("toolbot", 1);
-            bodyDict.Add("huntress", 2);
-            bodyDict.Add("engi", 3);
-            bodyDict.Add("engineer", 3);
-            bodyDict.Add("mage", 4);
-            bodyDict.Add("arti", 4);
-            bodyDict.Add("artificer", 4);
-            bodyDict.Add("merc", 5);
-            bodyDict.Add("mercenary", 5);
-            bodyDict.Add("rex", 6);
-            bodyDict.Add("treebot", 6);
+            SurvivorDict.Add("commando", SurvivorIndex.Commando);
+            SurvivorDict.Add("mult", SurvivorIndex.Toolbot);
+            SurvivorDict.Add("mul-t", SurvivorIndex.Toolbot);
+            SurvivorDict.Add("toolbot", SurvivorIndex.Toolbot);
+            SurvivorDict.Add("huntress", SurvivorIndex.Huntress);
+            SurvivorDict.Add("engi", SurvivorIndex.Engineer);
+            SurvivorDict.Add("engineer", SurvivorIndex.Engineer);
+            SurvivorDict.Add("mage", SurvivorIndex.Mage);
+            SurvivorDict.Add("arti", SurvivorIndex.Mage);
+            SurvivorDict.Add("artificer", SurvivorIndex.Mage);
+            SurvivorDict.Add("merc", SurvivorIndex.Merc);
+            SurvivorDict.Add("mercenary", SurvivorIndex.Merc);
+            SurvivorDict.Add("rex", SurvivorIndex.Treebot);
+            SurvivorDict.Add("treebot", SurvivorIndex.Treebot);
 
             // Config
-            InitialRandomBots = Config.Wrap("Initial Bots", "InitialRandomBots", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
-            for (int i = 0; i < bodyProperNameList.Count; i++ )
+            InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
+            for (int i = 0; i < RandomSurvivors.Length; i++)
             {
-                string name = bodyProperNameList[i];
-                InitialBots[i] = Config.Wrap("Initial Bots", "Initial" + name + "Bots", "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
+                string name = RandomSurvivors[i].ToString();
+                InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
             }
-            
+
             AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
             MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 8);
 
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
-            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots. (Host only)", true);
+            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
-            TreatBotsAsPlayers = Config.Wrap("Experimental", "TreatBotsAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
-
+            SpawnAsPlayers = Config.Wrap("Experimental", "SpawnAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+            
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
             {
@@ -115,7 +104,7 @@ namespace PlayerBots
                 };
             }
 
-            if (!TreatBotsAsPlayers.Value && AutoPurchaseItems.Value)
+            if (!SpawnAsPlayers.Value && AutoPurchaseItems.Value)
             {
                 // Give bots money
                 On.RoR2.TeamManager.GiveTeamMoney += (orig, self, teamIndex, money) =>
@@ -167,13 +156,13 @@ namespace PlayerBots
                     orig(self);
                 };
             }
-            
-            On.RoR2.Stage.Start += (orig, self) => 
+
+            On.RoR2.Stage.Start += (orig, self) =>
             {
                 orig(self);
                 if (NetworkServer.active)
                 {
-                    if (TreatBotsAsPlayers.Value)
+                    if (SpawnAsPlayers.Value)
                     {
                         foreach (GameObject playerbot in playerbots.ToArray())
                         {
@@ -196,51 +185,55 @@ namespace PlayerBots
                         {
                             SpawnRandomPlayerbots(NetworkUser.readOnlyInstancesList[0].master, InitialRandomBots.Value);
                         }
-                        for (int characterType = 0; characterType < InitialBots.Length; characterType++)
+                        for (int randomSurvivorsIndex = 0; randomSurvivorsIndex < InitialBots.Length; randomSurvivorsIndex++)
                         {
-                            if (InitialBots[characterType].Value > 0)
+                            if (InitialBots[randomSurvivorsIndex].Value > 0)
                             {
-                                SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, characterType, InitialBots[characterType].Value);
+                                SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, RandomSurvivors[randomSurvivorsIndex], InitialBots[randomSurvivorsIndex].Value);
                             }
                         }
                     }
                 }
             };
-
-            if (TreatBotsAsPlayers.Value)
-            {
-                On.RoR2.RunReport.Generate += (orig, run, resultType) =>
-                {
-                    foreach (GameObject playerbot in playerbots.ToArray())
-                    {
-                        if (!playerbot)
-                        {
-                            playerbots.Remove(playerbot);
-                            continue;
-                        }
-
-                        PlayerCharacterMasterController masterController = playerbot.GetComponent<PlayerCharacterMasterController>();
-                        if (masterController)
-                        {
-                            DestroyImmediate(masterController);
-                        }
-                    }
-                    return orig(run, resultType);
-                };
-            }
- 
         }
 
-        // Also really hacky
-        public static void SpawnPlayerbot(CharacterMaster owner, int characterType)
+        public static void SpawnPlayerbot(CharacterMaster owner, SurvivorIndex survivorIndex)
         {
-            GameObject bodyPrefab = BodyCatalog.FindBodyPrefab(bodyList[characterType]);
+            if (SpawnAsPlayers.Value)
+            {
+                SpawnPlayerbotAsPlayer(owner, survivorIndex);
+            }
+            else
+            {
+                SpawnPlayerbotAsSummon(owner, survivorIndex);
+            }
+        }
+
+        private static void SpawnPlayerbotAsPlayer(CharacterMaster owner, SurvivorIndex survivorIndex)
+        {
+            SurvivorDef def = SurvivorCatalog.GetSurvivorDef(survivorIndex);
+            if (def == null)
+            {
+                return;
+            }
+
+            GameObject bodyPrefab = def.bodyPrefab;
             if (bodyPrefab == null)
             {
                 return;
             }
 
-            SpawnCard card = (SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly");
+            // Card
+            PlayerBotSpawnCard card = ScriptableObject.CreateInstance<PlayerBotSpawnCard>();
+            card.hullSize = HullClassification.Human;
+            card.nodeGraphType = MapNodeGroup.GraphType.Ground;
+            card.occupyPosition = false;
+            card.sendOverNetwork = true;
+            card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
+            card.prefab = Resources.Load<GameObject>("prefabs/charactermasters/CommandoMaster");
+            card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
+
+            // Spawn
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
             {
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
@@ -250,7 +243,87 @@ namespace PlayerBots
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
-            
+
+            GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
+
+            if (gameObject)
+            {
+                // Add components
+                EntityStateMachine stateMachine = gameObject.AddComponent<PlayerBotStateMachine>() as EntityStateMachine;
+                BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
+                AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
+                aiOwnership.ownerMaster = owner;
+
+                CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
+                PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
+
+                if (master)
+                {
+                    master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
+
+                    master.bodyPrefab = bodyPrefab;
+                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
+
+                    master.GiveMoney(owner.money);
+                    master.inventory.CopyItemsFrom(owner.inventory);
+
+                    master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
+
+                    // Allow the bots to spawn in the next stage
+                    master.destroyOnBodyDeath = false;
+                    //master.gameObject.AddComponent<SetDontDestroyOnLoad>();
+                }
+                if (playerMaster)
+                {
+                    playerMaster.name = master.GetBody().GetDisplayName();
+                }
+
+                InjectSkillDrivers(gameObject, ai, survivorIndex);
+
+                if (AutoPurchaseItems.Value)
+                {
+                    // Add item manager
+                    ItemManager itemManager = gameObject.AddComponent<ItemManager>() as ItemManager;
+                }
+
+                // Add to playerbot list
+                playerbots.Add(gameObject);
+
+                // Cleanup
+                Destroy(card);
+            }
+        }
+
+        // A hacky method. Don't ask questions.
+        private static void SpawnPlayerbotAsSummon(CharacterMaster owner, SurvivorIndex survivorIndex)
+        {
+            SurvivorDef def = SurvivorCatalog.GetSurvivorDef(survivorIndex);
+            if (def == null)
+            {
+                return;
+            }
+
+            GameObject bodyPrefab = def.bodyPrefab;
+            if (bodyPrefab == null)
+            {
+                return;
+            }
+
+            // Get card
+            SpawnCard card = (SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly");
+
+            // Spawn request
+            DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
+            {
+                placementMode = DirectorPlacementRule.PlacementMode.Approximate,
+                minDistance = 3f,
+                maxDistance = 40f,
+                spawnOnTarget = owner.GetBody().transform
+            }, RoR2Application.rng);
+            spawnRequest.ignoreTeamMemberLimit = true;
+            spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
+
+            // Spawn
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
 
             if (gameObject)
@@ -258,20 +331,13 @@ namespace PlayerBots
                 CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                 AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
                 BaseAI ai = gameObject.GetComponent<BaseAI>();
-                AISkillDriver[] skillDrivers = gameObject.GetComponents<AISkillDriver>();
-
-                PlayerCharacterMasterController playerMaster = null;
-                if (TreatBotsAsPlayers.Value)
-                {
-                    playerMaster = gameObject.AddComponent<PlayerCharacterMasterController>() as PlayerCharacterMasterController;
-                }
 
                 if (master)
                 {
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
 
-                    master.teamIndex = TeamIndex.Player;
+                    //master.teamIndex = TeamIndex.Player;
 
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
@@ -281,10 +347,6 @@ namespace PlayerBots
                     // Allow the bots to spawn in the next stage
                     master.destroyOnBodyDeath = false;
                     master.gameObject.AddComponent<SetDontDestroyOnLoad>();
-                }
-                if (playerMaster && TreatBotsAsPlayers.Value)
-                {
-                    playerMaster.name = master.GetBody().GetDisplayName();
                 }
                 if (aiOwnership)
                 {
@@ -300,41 +362,7 @@ namespace PlayerBots
                     ai.aimVectorMaxSpeed = 180f;
                 }
 
-                if (skillDrivers != null)
-                {
-                    // Strip skills
-                    StripSkills(skillDrivers);
-                }
-
-                // Add skill drivers based on class
-                switch (characterType)
-                {
-                    case 0:
-                        CommandoHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 1:
-                        ToolbotHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 2:
-                        HuntressHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 3:
-                        EngineerHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 4:
-                        ArtificerHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 5:
-                        MercenaryHelper.InjectSkills(gameObject, ai);
-                        break;
-                    case 6:
-                        REXHelper.InjectSkills(gameObject, ai);
-                        break;
-                }
-
-                // Set skill drivers
-                AISkillDriver[] skills = ai.GetFieldValue<AISkillDriver[]>("skillDrivers");
-                ai.SetFieldValue("skillDrivers", gameObject.GetComponents<AISkillDriver>());
+                InjectSkillDrivers(gameObject, ai, survivorIndex);
 
                 if (AutoPurchaseItems.Value)
                 {
@@ -347,7 +375,47 @@ namespace PlayerBots
             }
         }
 
-        public static void SpawnPlayerbots(CharacterMaster owner, int characterType, int amount)
+        private static void InjectSkillDrivers(GameObject gameObject, BaseAI ai, SurvivorIndex survivorIndex)
+        {
+            AISkillDriver[] skillDrivers = gameObject.GetComponents<AISkillDriver>();
+            if (skillDrivers != null)
+            {
+                // Strip skills
+                StripSkills(skillDrivers);
+            }
+
+            // Add skill drivers based on class
+            switch (survivorIndex)
+            {
+                case SurvivorIndex.Commando:
+                    CommandoHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Toolbot:
+                    ToolbotHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Huntress:
+                    HuntressHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Engineer:
+                    EngineerHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Mage:
+                    ArtificerHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Merc:
+                    MercenaryHelper.InjectSkills(gameObject, ai);
+                    break;
+                case SurvivorIndex.Treebot:
+                    REXHelper.InjectSkills(gameObject, ai);
+                    break;
+            }
+
+            // Set skill drivers
+            AISkillDriver[] skills = ai.GetFieldValue<AISkillDriver[]>("skillDrivers");
+            ai.SetFieldValue("skillDrivers", gameObject.GetComponents<AISkillDriver>());
+        }
+
+        public static void SpawnPlayerbots(CharacterMaster owner, SurvivorIndex characterType, int amount)
         {
             for (int i = 0; i < amount; i++)
             {
@@ -360,16 +428,16 @@ namespace PlayerBots
             int lastCharacterType = -1;
             for (int i = 0; i < amount; i++)
             {
-                int characterType = -1;
+                int randomSurvivorIndex = -1;
                 do
                 {
-                    characterType = random.Next(0, bodyList.Count);
+                    randomSurvivorIndex = random.Next(0, RandomSurvivors.Length);
                 }
-                while (characterType == lastCharacterType && bodyList.Count > 1);
+                while (randomSurvivorIndex == lastCharacterType && RandomSurvivors.Length > 1);
 
-                SpawnPlayerbot(owner, characterType);
+                SpawnPlayerbot(owner, RandomSurvivors[randomSurvivorIndex]);
 
-                lastCharacterType = characterType;
+                lastCharacterType = randomSurvivorIndex;
             }
         }
 
@@ -379,50 +447,6 @@ namespace PlayerBots
             {
                 DestroyImmediate(skill);
             }
-        }
-
-        private static void DumpAllSkills(GameObject gameObject)
-        {
-            Chat.AddMessage("All Skills:");
-            AISkillDriver[] component4 = gameObject.GetComponents<AISkillDriver>();
-            foreach (AISkillDriver skill in component4)
-            {
-                Chat.AddMessage("Name: " + skill.customName);
-                DumpSkill(skill);
-                Chat.AddMessage(" ");
-            }
-        }
-
-        public static void DumpSkill(AISkillDriver skill)
-        {
-            Chat.AddMessage(" ");
-            Chat.AddMessage("Name: " + skill.customName);
-            Chat.AddMessage("Slot: " + skill.skillSlot);
-            Chat.AddMessage("Ready: " + skill.requireSkillReady);
-
-            Chat.AddMessage("TargetMove: " + skill.moveTargetType);
-            Chat.AddMessage("MinUHp: " + skill.minUserHealthFraction);
-            Chat.AddMessage("MaxUHp: " + skill.maxUserHealthFraction);
-            Chat.AddMessage("MinTHP: " + skill.minTargetHealthFraction);
-            Chat.AddMessage("MaxTHp: " + skill.maxTargetHealthFraction);
-
-            Chat.AddMessage("MinDist: " + skill.minDistance);
-            Chat.AddMessage("MaxDist: " + skill.maxDistance);
-
-            Chat.AddMessage("SelectionTarget: " + skill.selectionRequiresTargetLoS);
-            Chat.AddMessage("AimTarget: " + skill.activationRequiresTargetLoS);
-            Chat.AddMessage("AimConfirm: " + skill.activationRequiresAimConfirmation);
-
-            Chat.AddMessage("MoveType: " + skill.movementType);
-            Chat.AddMessage("AimType: " + skill.aimType);
-            Chat.AddMessage("MoveScale: " + skill.moveInputScale);
-
-            Chat.AddMessage("DriverTimer: " + skill.driverUpdateTimerOverride);
-            Chat.AddMessage("IgnoreNode: " + skill.ignoreNodeGraph);
-            Chat.AddMessage("ResetEnemy: " + skill.resetCurrentEnemyOnNextDriverSelection);
-            Chat.AddMessage("NoRepeat: " + skill.noRepeat);
-            Chat.AddMessage("Sprint: " + skill.shouldSprint);
-            Chat.AddMessage(" ");
         }
 
         [ConCommand(commandName = "addbot", flags = ConVarFlags.ExecuteOnServer, helpText = "Adds a playerbot. Usage: addbot [character index] [amount] [network user index]")]
@@ -437,7 +461,7 @@ namespace PlayerBots
                 }
             }
 
-            if (Stage.instance == null || bodyList.Count == 0)
+            if (Stage.instance == null)
             {
                 return;
             }
@@ -448,14 +472,16 @@ namespace PlayerBots
                 string classString = args.userArgs[0];
                 if (!Int32.TryParse(classString, out characterType))
                 {
-                    if (!bodyDict.TryGetValue(classString.ToLower(), out characterType))
+                    SurvivorIndex index;
+                    if (SurvivorDict.TryGetValue(classString.ToLower(), out index))
+                    {
+                        characterType = (int) index;
+                    }
+                    else
                     {
                         characterType = 0;
                     }
                 }
-
-                // Clamp
-                characterType = Math.Max(Math.Min(characterType, bodyList.Count - 1), 0);
             }
 
             int amount = 1;
@@ -487,7 +513,7 @@ namespace PlayerBots
                 return;
             }
 
-            SpawnPlayerbots(user.master, characterType, amount);
+            SpawnPlayerbots(user.master, (SurvivorIndex) characterType, amount);
         }
 
         [ConCommand(commandName = "addrandombot", flags = ConVarFlags.ExecuteOnServer, helpText = "Adds a random playerbot. Usage: addrandombot [amount] [network user index]")]
@@ -502,7 +528,7 @@ namespace PlayerBots
                 }
             }
 
-            if (Stage.instance == null || bodyList.Count == 0)
+            if (Stage.instance == null)
             {
                 return;
             }
@@ -567,7 +593,7 @@ namespace PlayerBots
 
         }
 
-        [ConCommand(commandName = "pb_initialbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
+        [ConCommand(commandName = "pb_startingbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
         private static void CCInitialBot(ConCommandArgs args)
         {
             int characterType = 0;
@@ -576,14 +602,19 @@ namespace PlayerBots
                 string classString = args.userArgs[0];
                 if (!Int32.TryParse(classString, out characterType))
                 {
-                    if (!bodyDict.TryGetValue(classString.ToLower(), out characterType))
+                    SurvivorIndex index;
+                    if (SurvivorDict.TryGetValue(classString.ToLower(), out index))
+                    {
+                        characterType = (int)index;
+                    }
+                    else
                     {
                         characterType = 0;
                     }
                 }
 
                 // Clamp
-                characterType = Math.Max(Math.Min(characterType, bodyList.Count - 1), 0);
+                characterType = Math.Max(Math.Min(characterType, RandomSurvivors.Length - 1), 0);
             }
             else
             {
@@ -602,10 +633,10 @@ namespace PlayerBots
             }
 
             InitialBots[characterType].Value = amount;
-            Debug.Log("Set initial " + bodyProperNameList[characterType] + " bots to " + amount);
+            Debug.Log("Set StartingBots." + RandomSurvivors[characterType].ToString() + " to " + amount);
         }
 
-        [ConCommand(commandName = "pb_initialbots_random", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
+        [ConCommand(commandName = "pb_startingbots_random", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
         private static void CCInitialRandomBot(ConCommandArgs args)
         {
             int amount = 0;
@@ -620,7 +651,7 @@ namespace PlayerBots
             }
 
             InitialRandomBots.Value = amount;
-            Debug.Log("Set initial random bots to " + amount);
+            Debug.Log("Set StartingBots.Random to " + amount);
         }
 
         [ConCommand(commandName = "pb_initialbots_clear", flags = ConVarFlags.SenderMustBeServer, helpText = "Resets all initial bots to 0")]
@@ -631,7 +662,7 @@ namespace PlayerBots
             {
                 InitialBots[i].Value = 0;
             }
-            Debug.Log("Reset all initial bots to 0");
+            Debug.Log("Reset all StartingBots values to 0");
         }
 
         [ConCommand(commandName = "pb_maxpurchases", flags = ConVarFlags.SenderMustBeServer, helpText = "Sets the MaxBotPurchasesPerStage value.")]
