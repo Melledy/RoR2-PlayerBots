@@ -16,7 +16,7 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.1")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
@@ -691,8 +691,7 @@ namespace PlayerBots
             Debug.Log("Set MaxBotPurchasesPerStage to " + amount);
         }
 
-        /*
-        [ConCommand(commandName = "testbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Testing Command")]
+        [ConCommand(commandName = "pb_listbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Lists bots in console.")]
         private static void CCTestBots(ConCommandArgs args)
         {
             if (Stage.instance == null)
@@ -701,12 +700,6 @@ namespace PlayerBots
             }
 
             NetworkUser user = args.sender;
-            CharacterBody body = user.master.GetBody();
-
-            if (!user.master.alive)
-            {
-                return;
-            }
 
             foreach (GameObject gameObject in playerbots)
             {
@@ -726,6 +719,5 @@ namespace PlayerBots
                 Debug.Log(name + "'s money: " + master.money);
             }
         }
-        */
     }
 }
