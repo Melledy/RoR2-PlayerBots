@@ -497,6 +497,7 @@ namespace PlayerBots
                 string userString = args.userArgs[2];
                 if (Int32.TryParse(userString, out userIndex))
                 {
+                    userIndex--;
                     if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
                     {
                         user = NetworkUser.readOnlyInstancesList[userIndex];
@@ -514,6 +515,8 @@ namespace PlayerBots
             }
 
             SpawnPlayerbots(user.master, (SurvivorIndex) characterType, amount);
+
+            Debug.Log(user.userName + " spawned " + amount + " bots for " + user.userName);
         }
 
         [ConCommand(commandName = "addrandombot", flags = ConVarFlags.ExecuteOnServer, helpText = "Adds a random playerbot. Usage: addrandombot [amount] [network user index]")]
@@ -546,6 +549,7 @@ namespace PlayerBots
                 string userString = args.userArgs[1];
                 if (Int32.TryParse(userString, out userIndex))
                 {
+                    userIndex--;
                     if (userIndex >= 0 && userIndex < NetworkUser.readOnlyInstancesList.Count)
                     {
                         user = NetworkUser.readOnlyInstancesList[userIndex];
@@ -563,6 +567,8 @@ namespace PlayerBots
             }
 
             SpawnRandomPlayerbots(user.master, amount);
+
+            Debug.Log(user.userName + " spawned " + amount + " bots for " + user.userName);
         }
 
         [ConCommand(commandName = "removebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
