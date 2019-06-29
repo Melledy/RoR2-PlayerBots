@@ -264,6 +264,8 @@ namespace PlayerBots
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
 
+                    master.teamIndex = TeamIndex.Player;
+
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
 
@@ -337,7 +339,7 @@ namespace PlayerBots
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
 
-                    //master.teamIndex = TeamIndex.Player;
+                    master.teamIndex = TeamIndex.Player;
 
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
