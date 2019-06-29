@@ -593,7 +593,7 @@ namespace PlayerBots
 
         }
 
-        [ConCommand(commandName = "pb_startingbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial bot count [character type] [amount]")]
+        [ConCommand(commandName = "pb_startingbots", flags = ConVarFlags.None, helpText = "Set initial bot count [character type] [amount]")]
         private static void CCInitialBot(ConCommandArgs args)
         {
             int characterType = 0;
@@ -636,7 +636,7 @@ namespace PlayerBots
             Debug.Log("Set StartingBots." + RandomSurvivors[characterType].ToString() + " to " + amount);
         }
 
-        [ConCommand(commandName = "pb_startingbots_random", flags = ConVarFlags.SenderMustBeServer, helpText = "Set initial random bot count [amount]")]
+        [ConCommand(commandName = "pb_startingbots_random", flags = ConVarFlags.None, helpText = "Set initial random bot count [amount]")]
         private static void CCInitialRandomBot(ConCommandArgs args)
         {
             int amount = 0;
@@ -654,7 +654,7 @@ namespace PlayerBots
             Debug.Log("Set StartingBots.Random to " + amount);
         }
 
-        [ConCommand(commandName = "pb_initialbots_clear", flags = ConVarFlags.SenderMustBeServer, helpText = "Resets all initial bots to 0")]
+        [ConCommand(commandName = "pb_startingbots_reset", flags = ConVarFlags.None, helpText = "Resets all initial bots to 0")]
         private static void CCClearInitialBot(ConCommandArgs args)
         {
             InitialRandomBots.Value = 0;
@@ -665,7 +665,7 @@ namespace PlayerBots
             Debug.Log("Reset all StartingBots values to 0");
         }
 
-        [ConCommand(commandName = "pb_maxpurchases", flags = ConVarFlags.SenderMustBeServer, helpText = "Sets the MaxBotPurchasesPerStage value.")]
+        [ConCommand(commandName = "pb_maxpurchases", flags = ConVarFlags.None, helpText = "Sets the MaxBotPurchasesPerStage value.")]
         private static void CCSetMaxPurchases(ConCommandArgs args)
         {
             int amount = 0;
