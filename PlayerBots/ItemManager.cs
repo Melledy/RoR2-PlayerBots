@@ -20,8 +20,9 @@ namespace PlayerBots
             this.maxPurchases = PlayerBotManager.MaxBotPurchasesPerStage.Value;
 
             this.chestPicker = new WeightedSelection<ChestTier>();
-            this.chestPicker.AddChoice(ChestTier.WHITE, 0.8f);
-            this.chestPicker.AddChoice(ChestTier.GREEN, 0.2f);
+            this.chestPicker.AddChoice(ChestTier.WHITE, PlayerBotManager.Tier1ChestBotWeight.Value);
+            this.chestPicker.AddChoice(ChestTier.GREEN, PlayerBotManager.Tier2ChestBotWeight.Value);
+            this.chestPicker.AddChoice(ChestTier.RED, PlayerBotManager.Tier3ChestBotWeight.Value);
 
             ResetPurchases();
         }
@@ -43,13 +44,13 @@ namespace PlayerBots
             switch (this.nextChestTier)
             {
                 case ChestTier.WHITE:
-                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(25);
+                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(PlayerBotManager.Tier1ChestBotCost.Value);
                     break;
                 case ChestTier.GREEN:
-                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(50);
+                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(PlayerBotManager.Tier2ChestBotCost.Value);
                     break;
                 case ChestTier.RED:
-                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(400);
+                    this.nextChestPrice = Run.instance.GetDifficultyScaledCost(PlayerBotManager.Tier3ChestBotCost.Value);
                     break;
             }
         }

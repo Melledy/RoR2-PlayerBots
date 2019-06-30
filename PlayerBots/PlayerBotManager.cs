@@ -31,9 +31,15 @@ namespace PlayerBots
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
         private static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
+        public static ConfigWrapper<float> Tier1ChestBotWeight { get; set; }
+        public static ConfigWrapper<int> Tier1ChestBotCost { get; set; }
+        public static ConfigWrapper<float> Tier2ChestBotWeight { get; set; }
+        public static ConfigWrapper<int> Tier2ChestBotCost { get; set; }
+        public static ConfigWrapper<float> Tier3ChestBotWeight { get; set; }
+        public static ConfigWrapper<int> Tier3ChestBotCost { get; set; }
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
-        private static ConfigWrapper<bool> SpawnAsPlayers { get; set; }
+        private static ConfigWrapper<bool> PlayerMode { get; set; }
 
         public void Awake()
         {
@@ -60,14 +66,20 @@ namespace PlayerBots
                 InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
             }
 
-            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
-            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 8);
+            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests. (Default: true)", true);
+            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage. (Default: 8)", 8);
+            Tier1ChestBotWeight = Config.Wrap("Bot Inventory", "Tier1ChestBotWeight", "Weight of a bot picking an item from a small chest's loot table. (Default: 0.8)", 0.8f);
+            Tier2ChestBotWeight = Config.Wrap("Bot Inventory", "Tier2ChestBotWeight", "Weight of a bot picking an item from a large chest's loot table. (Default: 0.2)", 0.2f);
+            Tier3ChestBotWeight = Config.Wrap("Bot Inventory", "Tier3ChestBotWeight", "Weight of a bot picking an item from a legendary chest's loot table. (Default: 0)", 0f);
+            Tier1ChestBotCost = Config.Wrap("Bot Inventory", "Tier1ChestBotCost", "Base price of a small chest for the bot. (Default: 25)", 25);
+            Tier2ChestBotCost = Config.Wrap("Bot Inventory", "Tier2ChestBotCost", "Base price of a large chest for the bot. (Default: 50)", 50);
+            Tier3ChestBotCost = Config.Wrap("Bot Inventory", "Tier3ChestBotCost", "Base price of a legendary chest for the bot. (Default: 400)", 400);
 
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
-            SpawnAsPlayers = Config.Wrap("Experimental", "SpawnAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
-            
+            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
             {
@@ -104,7 +116,7 @@ namespace PlayerBots
                 };
             }
 
-            if (!SpawnAsPlayers.Value && AutoPurchaseItems.Value)
+            if (!PlayerMode.Value && AutoPurchaseItems.Value)
             {
                 // Give bots money
                 On.RoR2.TeamManager.GiveTeamMoney += (orig, self, teamIndex, money) =>
@@ -162,7 +174,7 @@ namespace PlayerBots
                 orig(self);
                 if (NetworkServer.active)
                 {
-                    if (SpawnAsPlayers.Value)
+                    if (PlayerMode.Value)
                     {
                         foreach (GameObject playerbot in playerbots.ToArray())
                         {
@@ -199,7 +211,7 @@ namespace PlayerBots
 
         public static void SpawnPlayerbot(CharacterMaster owner, SurvivorIndex survivorIndex)
         {
-            if (SpawnAsPlayers.Value)
+            if (PlayerMode.Value)
             {
                 SpawnPlayerbotAsPlayer(owner, survivorIndex);
             }
