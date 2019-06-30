@@ -16,7 +16,7 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.1")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.2")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
@@ -387,31 +387,9 @@ namespace PlayerBots
             }
 
             // Add skill drivers based on class
-            switch (survivorIndex)
-            {
-                case SurvivorIndex.Commando:
-                    CommandoHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Toolbot:
-                    ToolbotHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Huntress:
-                    HuntressHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Engineer:
-                    EngineerHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Mage:
-                    ArtificerHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Merc:
-                    MercenaryHelper.InjectSkills(gameObject, ai);
-                    break;
-                case SurvivorIndex.Treebot:
-                    REXHelper.InjectSkills(gameObject, ai);
-                    break;
-            }
-
+            AiSkillHelper skillHelper = AiSkillHelperCatalog.GetSkillHelperByIndex(survivorIndex);
+            skillHelper.InjectSkills(gameObject, ai);
+            
             // Set skill drivers
             AISkillDriver[] skills = ai.GetFieldValue<AISkillDriver[]>("skillDrivers");
             ai.SetFieldValue("skillDrivers", gameObject.GetComponents<AISkillDriver>());

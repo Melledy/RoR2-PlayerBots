@@ -1,11 +1,13 @@
-﻿using RoR2.CharacterAI;
+﻿using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace PlayerBots.AI
+namespace PlayerBots.AI.SkillHelpers
 {
-    class REXHelper : AiSkillsHelper
+    [SkillHelperSurvivor(SurvivorIndex.Commando)]
+    class CommandoHelper : AiSkillHelper
     {
-        public static void InjectSkills(GameObject gameObject, BaseAI ai)
+        public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
             // Edit
             ai.minDistanceFromEnemy = 20;
@@ -16,16 +18,17 @@ namespace PlayerBots.AI
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
-            skill3.maxDistance = 40;
+            skill3.maxDistance = 20;
+            //skill3.maxUserHealthFraction = .25f;
             skill3.selectionRequiresTargetLoS = true;
-            skill3.activationRequiresTargetLoS = true;
+            skill3.activationRequiresTargetLoS = false;
             skill3.activationRequiresAimConfirmation = false;
-            skill3.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill3.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill3.movementType = AISkillDriver.MovementType.FleeMoveTarget;
+            skill3.aimType = AISkillDriver.AimType.MoveDirection;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
             skill3.noRepeat = false;
-            skill3.shouldSprint = false;
+            skill3.shouldSprint = true;
 
             AISkillDriver skill4 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill4.customName = "Special";
@@ -33,13 +36,12 @@ namespace PlayerBots.AI
             skill4.requireSkillReady = true;
             skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill4.minDistance = 0;
-            skill4.maxDistance = 50;
-            skill4.maxUserHealthFraction = .9f;
+            skill4.maxDistance = 35;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
             skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
             skill4.noRepeat = false;
@@ -51,13 +53,12 @@ namespace PlayerBots.AI
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 60;
-            skill2.minUserHealthFraction = .6f;
+            skill2.maxDistance = 40;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
             skill2.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill2.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill2.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill2.ignoreNodeGraph = false;
             skill2.resetCurrentEnemyOnNextDriverSelection = false;
             skill2.noRepeat = false;
@@ -75,7 +76,7 @@ namespace PlayerBots.AI
             skill1.activationRequiresTargetLoS = true;
             skill1.activationRequiresAimConfirmation = true;
             skill1.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill1.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill1.ignoreNodeGraph = false;
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;

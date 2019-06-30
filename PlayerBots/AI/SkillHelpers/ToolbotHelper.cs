@@ -1,11 +1,13 @@
-﻿using RoR2.CharacterAI;
+﻿using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace PlayerBots.AI
+namespace PlayerBots.AI.SkillHelpers
 {
-    class ToolbotHelper : AiSkillsHelper
+    [SkillHelperSurvivor(SurvivorIndex.Toolbot)]
+    class ToolbotHelper : AiSkillHelper
     {
-        public static void InjectSkills(GameObject gameObject, BaseAI ai)
+        public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
             // Edit
             ai.minDistanceFromEnemy = 20;

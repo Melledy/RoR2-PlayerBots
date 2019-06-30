@@ -1,11 +1,14 @@
-﻿using RoR2.CharacterAI;
+﻿using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace PlayerBots
+namespace PlayerBots.AI
 {
-    class AiSkillsHelper
+    abstract class AiSkillHelper
     {
-        public static void AddDefaultSkills(GameObject gameObject, BaseAI ai)
+        public abstract void InjectSkills(GameObject gameObject, BaseAI ai);
+
+        public void AddDefaultSkills(GameObject gameObject, BaseAI ai)
         {
             AISkillDriver skill;
 
