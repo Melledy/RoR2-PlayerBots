@@ -10,6 +10,7 @@ using RoR2.Navigation;
 using RoR2.Stats;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -40,7 +41,7 @@ namespace PlayerBots
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
         private static ConfigWrapper<bool> PlayerMode { get; set; }
-
+        private static ConfigWrapper<bool> TpFix { get; set; }
         public void Awake()
         {
             SurvivorDict.Add("commando", SurvivorIndex.Commando);
@@ -79,6 +80,7 @@ namespace PlayerBots
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+            TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times if PlayerMode is set to true.", true);
 
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
@@ -166,6 +168,16 @@ namespace PlayerBots
                         }
                     }
                     orig(self);
+                };
+            }
+
+            if (PlayerMode.Value && TpFix.Value)
+            {
+                On.RoR2.TeleporterInteraction.GetPlayerCountInRadius += (orig, self) =>
+                {
+                    Vector3 position = self.gameObject.transform.position;
+                    float num2 = self.clearRadius * self.clearRadius;
+                    return PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController c) => c.master.alive && (c.master.GetBody().transform.position - position).sqrMagnitude <= num2);
                 };
             }
 
