@@ -42,6 +42,8 @@ namespace PlayerBots
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
         private static ConfigWrapper<bool> PlayerMode { get; set; }
         private static ConfigWrapper<bool> TpFix { get; set; }
+        private static ConfigWrapper<bool> DontScaleInteractables { get; set; }
+
         public void Awake()
         {
             SurvivorDict.Add("commando", SurvivorIndex.Commando);
@@ -80,7 +82,8 @@ namespace PlayerBots
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
-            TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times if PlayerMode is set to true.", true);
+            TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
+            DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
 
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
@@ -219,6 +222,19 @@ namespace PlayerBots
                     }
                 }
             };
+
+            if (DontScaleInteractables.Value)
+            {
+                On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
+                {
+                    int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
+                    float num = 0.5f + (float)count * 0.5f;
+                    ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
+                    self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+
+                    orig(self);
+                };
+            }
         }
 
         public static void SpawnPlayerbot(CharacterMaster owner, SurvivorIndex survivorIndex)
