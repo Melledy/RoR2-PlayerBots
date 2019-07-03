@@ -23,14 +23,23 @@ namespace PlayerBots.Custom
             this.selectedSkilldriverName = "";
         }
 
-        /*
-        public override void OnBodyStart(CharacterBody newBody)
+        public override void OnBodyDeath()
         {
-            base.OnBodyStart(newBody);
-            this.name = newBody.GetDisplayName();
-            this.master.name = newBody.GetDisplayName();
+            if (this.body)
+            {
+                int num = UnityEngine.Random.Range(0, 37);
+                string baseToken = "PLAYER_DEATH_QUOTE_" + num;
+                Chat.SendBroadcastChat(new Chat.PlayerDeathChatMessage
+                {
+                    subjectNetworkUser = null,
+                    baseToken = baseToken,
+                    paramTokens = new string[]
+                        {
+                        this.master.name
+                        }
+                });
+            }
         }
-        */
 
         public override void OnBodyLost()
         {

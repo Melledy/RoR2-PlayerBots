@@ -206,6 +206,7 @@ namespace PlayerBots
                             }
                         }
                     }
+                    // Spawn starting bots
                     if (Run.instance.stageClearCount == 0)
                     {
                         if (InitialRandomBots.Value > 0)
@@ -272,6 +273,7 @@ namespace PlayerBots
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
             card.prefab = Resources.Load<GameObject>("prefabs/charactermasters/CommandoMaster");
             card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
+            card.bodyPrefab = bodyPrefab;
 
             // Spawn
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
@@ -283,6 +285,7 @@ namespace PlayerBots
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
+            spawnRequest.teamIndexOverride = TeamIndex.Player;
 
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
 
@@ -297,29 +300,16 @@ namespace PlayerBots
                 CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                 PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
 
-                if (master)
-                {
-                    master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
+                // Set commponent values
+                master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
+                master.GiveMoney(owner.money);
+                master.inventory.CopyItemsFrom(owner.inventory);
+                master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
+                master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
 
-                    master.bodyPrefab = bodyPrefab;
-                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
+                playerMaster.name = master.GetBody().GetDisplayName();
 
-                    master.teamIndex = TeamIndex.Player;
-
-                    master.GiveMoney(owner.money);
-                    master.inventory.CopyItemsFrom(owner.inventory);
-
-                    master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
-
-                    // Allow the bots to spawn in the next stage
-                    master.destroyOnBodyDeath = false;
-                    //master.gameObject.AddComponent<SetDontDestroyOnLoad>();
-                }
-                if (playerMaster)
-                {
-                    playerMaster.name = master.GetBody().GetDisplayName();
-                }
-
+                // Add custom skills
                 InjectSkillDrivers(gameObject, ai, survivorIndex);
 
                 if (AutoPurchaseItems.Value)
