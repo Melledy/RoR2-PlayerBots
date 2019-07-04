@@ -224,18 +224,39 @@ namespace PlayerBots
                 }
             };
 
-            if (DontScaleInteractables.Value)
+            if (PlayerMode.Value)
             {
                 On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
                 {
-                    int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
-                    float num = 0.5f + (float)count * 0.5f;
-                    ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
-                    self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+                    if (DontScaleInteractables.Value)
+                    {
+                        int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
+                        float num = 0.5f + (float)count * 0.5f;
+                        ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
+                        self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+                    }
+                    else if (Run.instance.stageClearCount == 0)
+                    {
+                        int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
+                        count += GetInitialBotCount();
+                        float num = 0.5f + (float)count * 0.5f;
+                        ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
+                        self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+                    }
 
                     orig(self);
                 };
             }
+        }
+
+        private static int GetInitialBotCount()
+        {
+            int count = InitialRandomBots.Value;
+            for (int randomSurvivorsIndex = 0; randomSurvivorsIndex < InitialBots.Length; randomSurvivorsIndex++)
+            {
+                count += InitialBots[randomSurvivorsIndex].Value;
+            }
+            return count;
         }
 
         public static void SpawnPlayerbot(CharacterMaster owner, SurvivorIndex survivorIndex)
