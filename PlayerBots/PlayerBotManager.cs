@@ -17,7 +17,7 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.0.2")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.1.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
