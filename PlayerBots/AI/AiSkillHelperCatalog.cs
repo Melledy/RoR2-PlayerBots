@@ -4,6 +4,7 @@ using RoR2;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityEngine;
 
 namespace PlayerBots.AI
 {
@@ -14,7 +15,7 @@ namespace PlayerBots.AI
 
         static AiSkillHelperCatalog()
         {
-            Populate();
+
         }
 
         public static void Populate()
@@ -36,12 +37,33 @@ namespace PlayerBots.AI
 
             if (survivorAttributes.Length > 0)
             {
-                index = survivorAttributes[0].Index;
+                SkillHelperSurvivor skillHelperSurvivor = survivorAttributes[0];
+                if (skillHelperSurvivor.Index != SurvivorIndex.None)
+                {
+                    index = skillHelperSurvivor.Index;
+                }
+                else if (skillHelperSurvivor.BodyPrefabName != null)
+                {
+                    if (PlayerBotUtils.TryGetSurvivorIndexByBodyPrefabName(skillHelperSurvivor.BodyPrefabName, out index))
+                    {
+                        PlayerBotManager.SurvivorDict.Add(BodyCatalog.FindBodyPrefab(skillHelperSurvivor.BodyPrefabName).GetComponent<CharacterBody>().GetDisplayName().ToLower(), index);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
             }
             else
             {
                 return;
             }
+
+            Debug.Log(index);
 
             SkillHelperDict.Add(index, skillHelper);
         }
@@ -64,10 +86,22 @@ namespace PlayerBots.AI
             Index = index;
         }
 
+        public SkillHelperSurvivor(String bodyPrefabName)
+        {
+            Index = SurvivorIndex.None;
+            BodyPrefabName = bodyPrefabName;
+        }
+
         public SurvivorIndex Index
         {
             get;
-            set;
+            private set;
+        }
+
+        public string BodyPrefabName
+        {
+            get;
+            private set;
         }
     }
 }

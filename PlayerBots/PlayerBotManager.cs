@@ -249,6 +249,11 @@ namespace PlayerBots
             }
         }
 
+        public void Start()
+        {
+            AiSkillHelperCatalog.Populate();
+        }
+
         private static int GetInitialBotCount()
         {
             int count = InitialRandomBots.Value;
@@ -746,6 +751,16 @@ namespace PlayerBots
                 }
 
                 Debug.Log(name + "'s money: " + master.money);
+            }
+        }
+
+        [ConCommand(commandName = "pb_listsurvivors", flags = ConVarFlags.None, helpText = "Lists survivor indexes.")]
+        private static void CCListSurvivors(ConCommandArgs args)
+        {
+            Debug.Log("Listing all registered survivors and their indexes.");
+            foreach (SurvivorDef def in SurvivorCatalog.allSurvivorDefs)
+            {
+                Debug.Log(def.bodyPrefab.GetComponent<CharacterBody>().GetDisplayName() + " : " + (int) def.survivorIndex);
             }
         }
     }
