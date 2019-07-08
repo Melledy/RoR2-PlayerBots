@@ -235,7 +235,7 @@ namespace PlayerBots
                         ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
                         self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
                     }
-                    else if (Run.instance.stageClearCount == 0)
+                    else if (Run.instance.stageClearCount == 0 && GetInitialBotCount() > 0)
                     {
                         int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
                         count += GetInitialBotCount();
