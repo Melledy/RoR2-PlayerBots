@@ -85,6 +85,8 @@ namespace PlayerBots
             TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
 
+            Config.Wrap("Experimental", "SpawnAsPlayers", "Depreciated. Use PlayerMode instead.", false);
+
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
             {
