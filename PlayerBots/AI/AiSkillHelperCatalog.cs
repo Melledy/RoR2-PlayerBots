@@ -63,8 +63,6 @@ namespace PlayerBots.AI
                 return;
             }
 
-            Debug.Log(index);
-
             SkillHelperDict.Add(index, skillHelper);
         }
 
