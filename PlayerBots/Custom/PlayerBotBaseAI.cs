@@ -32,6 +32,7 @@ namespace PlayerBots.Custom
                 Chat.SendBroadcastChat(new Chat.PlayerDeathChatMessage
                 {
                     subjectNetworkUser = null,
+                    subject = this.body.masterObject,
                     baseToken = baseToken,
                     paramTokens = new string[]
                         {
