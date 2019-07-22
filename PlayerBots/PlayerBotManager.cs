@@ -81,11 +81,11 @@ namespace PlayerBots
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
-            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+            PlayerMode = Config.Wrap("Experimental", "SpawnAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
 
-            Config.Wrap("Experimental", "SpawnAsPlayers", "Depreciated. Use PlayerMode instead.", false);
+            // Config.Wrap("Experimental", "SpawnAsPlayers", "Depreciated. Use PlayerMode instead.", false);
 
             // Hooks
             On.RoR2.Console.Awake += (orig, self) =>
