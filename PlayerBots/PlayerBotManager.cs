@@ -11,22 +11,24 @@ using RoR2.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.1.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.2.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engineer, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot};
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader};
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
+        // Config options
         private static ConfigWrapper<int> InitialRandomBots { get; set; }
         private static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[RandomSurvivors.Length];
 
@@ -51,8 +53,8 @@ namespace PlayerBots
             SurvivorDict.Add("mul-t", SurvivorIndex.Toolbot);
             SurvivorDict.Add("toolbot", SurvivorIndex.Toolbot);
             SurvivorDict.Add("huntress", SurvivorIndex.Huntress);
-            SurvivorDict.Add("engi", SurvivorIndex.Engineer);
-            SurvivorDict.Add("engineer", SurvivorIndex.Engineer);
+            SurvivorDict.Add("engi", SurvivorIndex.Engi);
+            SurvivorDict.Add("engineer", SurvivorIndex.Engi);
             SurvivorDict.Add("mage", SurvivorIndex.Mage);
             SurvivorDict.Add("arti", SurvivorIndex.Mage);
             SurvivorDict.Add("artificer", SurvivorIndex.Mage);
@@ -60,6 +62,7 @@ namespace PlayerBots
             SurvivorDict.Add("mercenary", SurvivorIndex.Merc);
             SurvivorDict.Add("rex", SurvivorIndex.Treebot);
             SurvivorDict.Add("treebot", SurvivorIndex.Treebot);
+            SurvivorDict.Add("loader", SurvivorIndex.Loader);
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
@@ -313,7 +316,7 @@ namespace PlayerBots
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
-            spawnRequest.teamIndexOverride = TeamIndex.Player;
+            spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
 
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
 
@@ -394,6 +397,7 @@ namespace PlayerBots
 
                 if (master)
                 {
+                    master.name = "PlayerBot";
                     master.bodyPrefab = bodyPrefab;
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
 
@@ -447,10 +451,12 @@ namespace PlayerBots
             // Add skill drivers based on class
             AiSkillHelper skillHelper = AiSkillHelperCatalog.GetSkillHelperByIndex(survivorIndex);
             skillHelper.InjectSkills(gameObject, ai);
-            
+
             // Set skill drivers
-            AISkillDriver[] skills = ai.GetFieldValue<AISkillDriver[]>("skillDrivers");
-            ai.SetFieldValue("skillDrivers", gameObject.GetComponents<AISkillDriver>());
+            PropertyInfo property = typeof(BaseAI).GetProperty("skillDrivers");
+            property.DeclaringType.GetProperty("skillDrivers");
+            property.SetValue(ai, gameObject.GetComponents<AISkillDriver>(), BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
+            //ai.SetFieldValue2("skillDrivers", gameObject.GetComponents<AISkillDriver>());
         }
 
         public static void SpawnPlayerbots(CharacterMaster owner, SurvivorIndex characterType, int amount)

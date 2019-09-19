@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Engineer)]
+    [SkillHelperSurvivor(SurvivorIndex.Engi)]
     class EngineerHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)

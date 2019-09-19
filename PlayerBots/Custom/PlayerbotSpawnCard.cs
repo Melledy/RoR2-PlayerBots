@@ -11,6 +11,10 @@ namespace PlayerBots.Custom
         public string playerbotName;
         public GameObject bodyPrefab;
 
+        public PlayerBotSpawnCard() {
+            this.loadout = new SerializableLoadout(); // Prevent errors
+        }
+
         public override GameObject DoSpawn(Vector3 position, Quaternion rotation, DirectorSpawnRequest directorSpawnRequest)
         {
             MasterSummon summon = new MasterSummon

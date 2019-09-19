@@ -18,7 +18,6 @@ namespace PlayerBots.Custom
             this.aimVectorDampTime = .01f;
             this.aimVectorMaxSpeed = 180f;
             this.enemyAttentionDuration = 5;
-            this.nodegraphType = MapNodeGroup.GraphType.Ground;
             this.navigationType = BaseAI.NavigationType.Nodegraph;
             this.selectedSkilldriverName = "";
         }
@@ -31,8 +30,7 @@ namespace PlayerBots.Custom
                 string baseToken = "PLAYER_DEATH_QUOTE_" + num;
                 Chat.SendBroadcastChat(new Chat.PlayerDeathChatMessage
                 {
-                    subjectNetworkUser = null,
-                    subject = this.body.masterObject,
+                    subjectAsCharacterBody = this.body,
                     baseToken = baseToken,
                     paramTokens = new string[]
                         {
