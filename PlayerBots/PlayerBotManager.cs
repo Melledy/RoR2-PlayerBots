@@ -457,6 +457,9 @@ namespace PlayerBots
             property.DeclaringType.GetProperty("skillDrivers");
             property.SetValue(ai, gameObject.GetComponents<AISkillDriver>(), BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
             //ai.SetFieldValue2("skillDrivers", gameObject.GetComponents<AISkillDriver>());
+
+            // Combat update timer fix
+            gameObject.AddComponent<PlayerBotCombatFix>();
         }
 
         public static void SpawnPlayerbots(CharacterMaster owner, SurvivorIndex characterType, int amount)
