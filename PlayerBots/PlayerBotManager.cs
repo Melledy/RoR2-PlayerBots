@@ -331,6 +331,9 @@ namespace PlayerBots
                 CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                 PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
 
+                // Random skin
+                SetRandomSkin(master, bodyPrefab);
+
                 // Set commponent values
                 master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
                 master.GiveMoney(owner.money);
@@ -399,13 +402,13 @@ namespace PlayerBots
                 {
                     master.name = "PlayerBot";
                     master.bodyPrefab = bodyPrefab;
-                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
+                    SetRandomSkin(master, bodyPrefab);
 
+                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
                     master.teamIndex = TeamIndex.Player;
 
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
-
                     master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
 
                     // Allow the bots to spawn in the next stage
@@ -437,6 +440,13 @@ namespace PlayerBots
                 // Add to playerbot list
                 playerbots.Add(gameObject);
             }
+        }
+
+        private static void SetRandomSkin(CharacterMaster master, GameObject bodyPrefab)
+        {
+            int bodyIndex = bodyPrefab.GetComponent<CharacterBody>().bodyIndex;
+            SkinDef[] skins = BodyCatalog.GetBodySkins(bodyIndex);
+            master.loadout.bodyLoadoutManager.SetSkinIndex(bodyIndex, (uint) UnityEngine.Random.Range(0, skins.Length));
         }
 
         private static void InjectSkillDrivers(GameObject gameObject, BaseAI ai, SurvivorIndex survivorIndex)
