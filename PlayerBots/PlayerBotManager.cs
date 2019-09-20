@@ -52,6 +52,7 @@ namespace PlayerBots
             SurvivorDict.Add("mult", SurvivorIndex.Toolbot);
             SurvivorDict.Add("mul-t", SurvivorIndex.Toolbot);
             SurvivorDict.Add("toolbot", SurvivorIndex.Toolbot);
+            SurvivorDict.Add("hunt", SurvivorIndex.Huntress);
             SurvivorDict.Add("huntress", SurvivorIndex.Huntress);
             SurvivorDict.Add("engi", SurvivorIndex.Engi);
             SurvivorDict.Add("engineer", SurvivorIndex.Engi);
