@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using EntityStates;
 using EntityStates.AI.Walker;
+using MonoMod.Cil;
 using PlayerBots.AI;
 using PlayerBots.Custom;
 using RoR2;
@@ -252,6 +253,14 @@ namespace PlayerBots
 
                     orig(self);
                 };
+
+                IL.RoR2.UI.AllyCardManager.PopulateCharacterDataSet += il =>
+                {
+                    ILCursor c = new ILCursor(il);
+                    c.GotoNext(x => x.MatchCallvirt<CharacterMaster>("get_playerCharacterMasterController"));
+                    c.Index += 2;
+                    c.EmitDelegate<Func<bool, bool>>(x => false);
+                };
             }
         }
 
@@ -316,7 +325,7 @@ namespace PlayerBots
                 spawnOnTarget = owner.GetBody().transform
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
-            spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
+            //spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
 
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
