@@ -99,8 +99,9 @@ namespace PlayerBots
             if (dropList != null && dropList.Count > 0)
             {
                 PickupIndex dropPickup = Run.instance.treasureRng.NextElementUniform<PickupIndex>(dropList);
-                this.master.inventory.GiveItem(dropPickup.itemIndex, 1);
-                Debug.Log(this.master.GetBody().GetUserName() + " bought a " + dropPickup.itemIndex);
+                ItemIndex item = PickupCatalog.GetPickupDef(dropPickup).itemIndex;
+                this.master.inventory.GiveItem(item, 1);
+                Debug.Log(this.master.GetBody().GetUserName() + " bought a " + item);
             }
         }
 
