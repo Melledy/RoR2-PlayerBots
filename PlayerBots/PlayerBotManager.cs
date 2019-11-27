@@ -19,7 +19,7 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.2.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.2.1")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
@@ -90,14 +90,7 @@ namespace PlayerBots
             TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
 
-            // Config.Wrap("Experimental", "SpawnAsPlayers", "Depreciated. Use PlayerMode instead.", false);
-
-            // Hooks
-            On.RoR2.Console.Awake += (orig, self) =>
-            {
-                CommandHelper.RegisterCommands(self);
-                orig(self);
-            };
+            R2API.Utils.CommandHelper.AddToConsoleWhenReady();
 
             // Ugh.
             On.RoR2.CharacterAI.BaseAI.OnBodyLost += (orig, self) =>
