@@ -22,7 +22,7 @@ namespace PlayerBots.Custom
             this.selectedSkilldriverName = "";
         }
 
-        public override void OnBodyDeath()
+        public override void OnBodyDeath(CharacterBody characterBody)
         {
             if (this.body)
             {
@@ -38,11 +38,6 @@ namespace PlayerBots.Custom
                         }
                 });
             }
-        }
-
-        public override void OnBodyLost()
-        {
-
         }
     }
 }

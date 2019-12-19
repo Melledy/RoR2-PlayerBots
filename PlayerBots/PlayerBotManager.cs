@@ -19,14 +19,14 @@ using UnityEngine.Networking;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.2.1")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.3.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader};
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco};
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
@@ -65,6 +65,8 @@ namespace PlayerBots
             SurvivorDict.Add("rex", SurvivorIndex.Treebot);
             SurvivorDict.Add("treebot", SurvivorIndex.Treebot);
             SurvivorDict.Add("loader", SurvivorIndex.Loader);
+            SurvivorDict.Add("acrid", SurvivorIndex.Croco);
+            SurvivorDict.Add("croco", SurvivorIndex.Croco);
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
@@ -93,13 +95,13 @@ namespace PlayerBots
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
 
             // Ugh.
-            On.RoR2.CharacterAI.BaseAI.OnBodyLost += (orig, self) =>
+            On.RoR2.CharacterAI.BaseAI.OnBodyLost += (orig, self, body) =>
             {
                 if (self.name.Equals("PlayerBot"))
                 {
                     return;
                 }
-                orig(self);
+                orig(self, body);
             };
 
             // Super hacky but it works
