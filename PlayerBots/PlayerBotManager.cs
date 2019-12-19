@@ -107,7 +107,7 @@ namespace PlayerBots
             };
 
             // Maybe there is a better way to do this
-            if (ShowNameplates.Value)
+            if (ShowNameplates.Value && !PlayerMode.Value)
             {
                 IL.RoR2.TeamComponent.SetupIndicator += il =>
                 {
@@ -120,11 +120,13 @@ namespace PlayerBots
                             return x;
                         }
                     );
-                    if (isPlayerBot)
-                    {
-                        c.Index += 1;
-                        c.EmitDelegate<Func<bool, bool>>(x => isPlayerBot);
-                    }
+                    c.Index += 1;
+                    c.EmitDelegate<Func<bool, bool>>(x =>
+                        {
+                            if (isPlayerBot) return true;
+                            return x;
+                        }
+                    );
                 };
             }
 

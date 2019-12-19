@@ -19,7 +19,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.requireSkillReady = true;
             skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill4.minDistance = 0;
-            skill4.maxDistance = 40;
+            skill4.maxDistance = 60;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = false;
             skill4.activationRequiresAimConfirmation = false;
