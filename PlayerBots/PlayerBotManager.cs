@@ -118,8 +118,11 @@ namespace PlayerBots
                             return x;
                         }
                     );
-                    c.Index += 1;
-                    c.EmitDelegate<Func<bool, bool>>(x => isPlayerBot);
+                    if (isPlayerBot)
+                    {
+                        c.Index += 1;
+                        c.EmitDelegate<Func<bool, bool>>(x => isPlayerBot);
+                    }
                 };
             }
 
