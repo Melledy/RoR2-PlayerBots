@@ -21,7 +21,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.maxDistance = 60;
             skill3.selectionRequiresTargetLoS = true;
             skill3.activationRequiresTargetLoS = true;
-            skill3.activationRequiresAimConfirmation = false;
+            skill3.activationRequiresAimConfirmation = true;
             skill3.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
             skill3.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill3.ignoreNodeGraph = false;
@@ -37,8 +37,8 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.minDistance = 0;
             skill4.maxDistance = 90;
             skill4.selectionRequiresTargetLoS = true;
-            skill4.activationRequiresTargetLoS = false;
-            skill4.activationRequiresAimConfirmation = false;
+            skill4.activationRequiresTargetLoS = true;
+            skill4.activationRequiresAimConfirmation = true;
             skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
             skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill4.ignoreNodeGraph = false;
