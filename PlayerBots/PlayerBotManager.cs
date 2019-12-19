@@ -104,22 +104,22 @@ namespace PlayerBots
                 orig(self, body);
             };
 
-            // Super hacky but it works
+            // Maybe there is a better way to do this
             if (ShowNameplates.Value)
             {
-                On.RoR2.TeamComponent.SetupIndicator += (orig, self) =>
+                IL.RoR2.TeamComponent.SetupIndicator += il =>
                 {
-                    CharacterBody component = self.GetComponent<CharacterBody>();
-                    if (component && component.master && component.master.name.Equals("PlayerBot"))
-                    {
-                        PlayerCharacterMasterController playerMaster = component.master.gameObject.AddComponent<PlayerCharacterMasterController>() as PlayerCharacterMasterController;
-                        orig(self);
-                        Destroy(playerMaster);
-                    }
-                    else
-                    {
-                        orig(self);
-                    }
+                    ILCursor c = new ILCursor(il);
+                    c.GotoNext(x => x.MatchCallvirt<CharacterBody>("get_isPlayerControlled"));
+                    bool isPlayerBot = false;
+                    c.EmitDelegate<Func<CharacterBody, CharacterBody>>(x => 
+                        {
+                            isPlayerBot = x.master.name.Equals("PlayerBot");
+                            return x;
+                        }
+                    );
+                    c.Index += 1;
+                    c.EmitDelegate<Func<bool, bool>>(x => isPlayerBot);
                 };
             }
 
@@ -392,7 +392,8 @@ namespace PlayerBots
                 spawnOnTarget = owner.GetBody().transform
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
-            spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
+            spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
+            //spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
 
             // Spawn
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
