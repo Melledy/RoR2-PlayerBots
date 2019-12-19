@@ -14,6 +14,11 @@ namespace PlayerBots
         private int purchases = 0;
         private int maxPurchases = 8;
 
+        private static readonly EquipmentIndex[] usableEquipment = new EquipmentIndex[] {
+            EquipmentIndex.CommandMissile, EquipmentIndex.BFG, EquipmentIndex.Lightning, EquipmentIndex.CritOnUse,
+            EquipmentIndex.Blackhole, EquipmentIndex.Fruit, EquipmentIndex.GainArmor, EquipmentIndex.Cleanse
+        };
+
         public void Awake()
         {
             this.master = base.gameObject.GetComponent<CharacterMaster>();
@@ -85,6 +90,11 @@ namespace PlayerBots
             switch (chestTier)
             {
                 case ChestTier.WHITE:
+                    if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None && PlayerBotManager.EquipmentBuyChance.Value > UnityEngine.Random.Range(0, 100))
+                    {
+                        this.master.inventory.SetEquipmentIndex(ItemManager.usableEquipment[UnityEngine.Random.Range(0, ItemManager.usableEquipment.Length)]);
+                        return;
+                    }
                     dropList = Run.instance.smallChestDropTierSelector.Evaluate(UnityEngine.Random.value);
                     break;
                 case ChestTier.GREEN:

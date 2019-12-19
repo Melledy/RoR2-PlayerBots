@@ -41,6 +41,7 @@ namespace PlayerBots
         public static ConfigWrapper<int> Tier2ChestBotCost { get; set; }
         public static ConfigWrapper<float> Tier3ChestBotWeight { get; set; }
         public static ConfigWrapper<int> Tier3ChestBotCost { get; set; }
+        public static ConfigWrapper<int> EquipmentBuyChance { get; set; }
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
         private static ConfigWrapper<bool> PlayerMode { get; set; }
@@ -84,6 +85,7 @@ namespace PlayerBots
             Tier1ChestBotCost = Config.Wrap("Bot Inventory", "Tier1ChestBotCost", "Base price of a small chest for the bot. (Default: 25)", 25);
             Tier2ChestBotCost = Config.Wrap("Bot Inventory", "Tier2ChestBotCost", "Base price of a large chest for the bot. (Default: 50)", 50);
             Tier3ChestBotCost = Config.Wrap("Bot Inventory", "Tier3ChestBotCost", "Base price of a legendary chest for the bot. (Default: 400)", 400);
+            EquipmentBuyChance = Config.Wrap("Bot Inventory", "EquipmentBuyChance", "Chance between 0 and 100 for a bot to buy from an equipment barrel instead of a tier 1 chest. Only active while the bot does not have a equipment item. (Default: 15)", 15);
 
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
