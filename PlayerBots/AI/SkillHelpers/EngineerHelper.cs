@@ -24,10 +24,10 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.activationRequiresTargetLoS = false;
             skill4.activationRequiresAimConfirmation = false;
             skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.MoveDirection;
+            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill4.ignoreNodeGraph = true;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
+            skill4.noRepeat = true;
             skill4.shouldSprint = false;
 
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
