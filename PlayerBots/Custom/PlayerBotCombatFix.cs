@@ -33,6 +33,11 @@ namespace PlayerBots.Custom
             }
         }
 
+        private bool HasBuff(BuffIndex buff)
+        {
+            return this.master.GetBody().HasBuff(buff);
+        }
+
         private void ProcessEquipment()
         {
             if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None || this.master.GetBody().equipmentSlot.stock == 0)
@@ -43,15 +48,21 @@ namespace PlayerBots.Custom
             switch (this.master.inventory.currentEquipmentIndex)
             {
                 case EquipmentIndex.CommandMissile:
-                case EquipmentIndex.BFG:
                 case EquipmentIndex.Lightning:
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
                     {
                         FireEquipment();
                     }
                     break;
+                case EquipmentIndex.BFG: // Dont spam preon at random mobs
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && 
+                        (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
+                    {
+                        FireEquipment();
+                    }
+                    break;
                 case EquipmentIndex.CritOnUse:
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.master.GetBody().HasBuff(BuffIndex.FullCrit))
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.FullCrit))
                     {
                         FireEquipment();
                     }
@@ -62,8 +73,9 @@ namespace PlayerBots.Custom
                         FireEquipment();
                     }
                     break;
+                case EquipmentIndex.PassiveHealing:
                 case EquipmentIndex.Fruit:
-                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5)
+                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(BuffIndex.HealingDisabled))
                     {
                         FireEquipment();
                     }
@@ -75,7 +87,7 @@ namespace PlayerBots.Custom
                     }
                     break;
                 case EquipmentIndex.Cleanse:
-                    if (this.master.GetBody().HasBuff(BuffIndex.OnFire) || this.master.GetBody().HasBuff(BuffIndex.HealingDisabled))
+                    if (this.HasBuff(BuffIndex.OnFire) || this.HasBuff(BuffIndex.HealingDisabled))
                     {
                         FireEquipment();
                     }

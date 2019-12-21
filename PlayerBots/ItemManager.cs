@@ -16,7 +16,8 @@ namespace PlayerBots
 
         private static readonly EquipmentIndex[] usableEquipment = new EquipmentIndex[] {
             EquipmentIndex.CommandMissile, EquipmentIndex.BFG, EquipmentIndex.Lightning, EquipmentIndex.CritOnUse,
-            EquipmentIndex.Blackhole, EquipmentIndex.Fruit, EquipmentIndex.GainArmor, EquipmentIndex.Cleanse
+            EquipmentIndex.Blackhole, EquipmentIndex.Fruit, EquipmentIndex.GainArmor, EquipmentIndex.Cleanse,
+            EquipmentIndex.PassiveHealing
         };
 
         public void Awake()
