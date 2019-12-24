@@ -5,6 +5,7 @@ using EntityStates.AI.Walker;
 using MonoMod.Cil;
 using PlayerBots.AI;
 using PlayerBots.Custom;
+using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Navigation;
@@ -20,6 +21,7 @@ namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.3.0")]
+    [R2APISubmoduleDependency("CommandHelper")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
