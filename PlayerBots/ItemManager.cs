@@ -41,7 +41,7 @@ namespace PlayerBots
         public void ResetPurchases()
         {
             this.ResetChest();
-            this.purchases = 0;
+            this.maxPurchases = GetMaxPurchases();
         }
 
         public void ResetChest()
@@ -61,6 +61,11 @@ namespace PlayerBots
             }
         }
 
+        private int GetMaxPurchases()
+        {
+            return PlayerBotManager.MaxBotPurchasesPerStage.Value * (RoR2.Run.instance.stageClearCount + 1);
+        }
+
         private void CheckBuy()
         {
             if (!master.alive)
@@ -69,7 +74,7 @@ namespace PlayerBots
             }
 
             // Max purchases for this map reached
-            if (this.purchases >= PlayerBotManager.MaxBotPurchasesPerStage.Value)
+            if (this.purchases >= this.maxPurchases)
             {
                 return;
             }
