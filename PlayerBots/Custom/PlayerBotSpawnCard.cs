@@ -13,35 +13,15 @@ namespace PlayerBots.Custom
 
         public PlayerBotSpawnCard() {
             this.loadout = new SerializableLoadout(); // Prevent errors
+            this.runtimeLoadout = new Loadout();
         }
 
-        public override GameObject DoSpawn(Vector3 position, Quaternion rotation, DirectorSpawnRequest directorSpawnRequest)
+        protected override Action<CharacterMaster> GetPreSpawnSetupCallback()
         {
-            MasterSummon summon = new MasterSummon
+            return master => 
             {
-                masterPrefab = this.prefab,
-                position = position,
-                rotation = rotation,
-                summonerBodyObject = directorSpawnRequest.summonerBodyObject,
-                teamIndexOverride = directorSpawnRequest.teamIndexOverride,
-                ignoreTeamMemberLimit = directorSpawnRequest.ignoreTeamMemberLimit
+                master.bodyPrefab = this.bodyPrefab;
             };
-            if (playerbotName != null)
-            {
-                summon.preSpawnSetupCallback += OnPreSpawn;
-            }
-            CharacterMaster characterMaster = summon.Perform();
-            if (characterMaster == null)
-            {
-                return null;
-            }
-            return characterMaster.gameObject;
-        }
-
-        private void OnPreSpawn(CharacterMaster master)
-        {
-            master.bodyPrefab = this.bodyPrefab;
-            master.name = playerbotName;
         }
     }
 }

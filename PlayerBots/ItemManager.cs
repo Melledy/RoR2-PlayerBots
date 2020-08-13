@@ -68,7 +68,7 @@ namespace PlayerBots
 
         private void CheckBuy()
         {
-            if (!master.alive)
+            if (master.IsDeadAndOutOfLivesServer())
             {
                 return;
             }

@@ -24,10 +24,10 @@ namespace PlayerBots.Custom
             // Remove the default combat delay with ai
             if (this.stateMachine.state is Combat)
             {
-                ((Combat)this.stateMachine.state).SetFieldValue("updateTimer", 0);
+                ((Combat)this.stateMachine.state).SetFieldValue("aiUpdateTimer", 0);
             }
             // Equipment
-            if (this.master.GetBody() && this.master.alive)
+            if (this.master.GetBody() && !this.master.IsDeadAndOutOfLivesServer())
             {
                 ProcessEquipment();
             }

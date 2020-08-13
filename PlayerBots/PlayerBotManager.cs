@@ -70,6 +70,8 @@ namespace PlayerBots
             SurvivorDict.Add("loader", SurvivorIndex.Loader);
             SurvivorDict.Add("acrid", SurvivorIndex.Croco);
             SurvivorDict.Add("croco", SurvivorIndex.Croco);
+            SurvivorDict.Add("capt", SurvivorIndex.Captain);
+            SurvivorDict.Add("captain", SurvivorIndex.Captain);
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
@@ -92,7 +94,7 @@ namespace PlayerBots
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
-            PlayerMode = Config.Wrap("Experimental", "SpawnAsPlayers", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
+            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
 
@@ -153,7 +155,7 @@ namespace PlayerBots
                                 continue;
                             }
                             CharacterMaster master = playerbot.GetComponent<CharacterMaster>();
-                            if (master && master.alive && master.teamIndex == teamIndex)
+                            if (master && !master.IsDeadAndOutOfLivesServer() && master.teamIndex == teamIndex)
                             {
                                 master.GiveMoney(money);
                             }
@@ -185,6 +187,7 @@ namespace PlayerBots
                 };
             }
 
+            /*
             if (PlayerMode.Value && TpFix.Value)
             {
                 On.RoR2.TeleporterInteraction.GetPlayerCountInRadius += (orig, self) =>
@@ -194,6 +197,7 @@ namespace PlayerBots
                     return PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController c) => c.master.alive && (c.master.GetBody().transform.position - position).sqrMagnitude <= num2);
                 };
             }
+            */
 
             On.RoR2.Stage.Start += (orig, self) =>
             {
@@ -237,6 +241,7 @@ namespace PlayerBots
 
             if (PlayerMode.Value)
             {
+                /*
                 On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
                 {
                     if (DontScaleInteractables.Value)
@@ -255,6 +260,18 @@ namespace PlayerBots
                         self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
                     }
 
+                    orig(self);
+                };
+                */
+
+                // Required for bots to even move, maybe switch to il later
+                On.RoR2.PlayerCharacterMasterController.Update += (orig, self) =>
+                {
+                    if (self.name.Equals("PlayerBot"))
+                    {
+                        //self.InvokeMethod("SetBody", new object[] { self.master.GetBodyObject() });
+                        return;
+                    }
                     orig(self);
                 };
 
@@ -332,46 +349,50 @@ namespace PlayerBots
             //spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
 
-            GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
-
-            if (gameObject)
+            spawnRequest.onSpawnedServer = result =>
             {
-                // Add components
-                EntityStateMachine stateMachine = gameObject.AddComponent<PlayerBotStateMachine>() as EntityStateMachine;
-                BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
-                AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
-                aiOwnership.ownerMaster = owner;
+                GameObject gameObject = result.spawnedInstance;
 
-                CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
-                PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
-
-                // Random skin
-                SetRandomSkin(master, bodyPrefab);
-
-                // Set commponent values
-                master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
-                master.GiveMoney(owner.money);
-                master.inventory.CopyItemsFrom(owner.inventory);
-                master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
-                master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
-
-                playerMaster.name = master.GetBody().GetDisplayName();
-
-                // Add custom skills
-                InjectSkillDrivers(gameObject, ai, survivorIndex);
-
-                if (AutoPurchaseItems.Value)
+                if (gameObject)
                 {
-                    // Add item manager
-                    ItemManager itemManager = gameObject.AddComponent<ItemManager>() as ItemManager;
+                    // Add components
+                    EntityStateMachine stateMachine = gameObject.AddComponent<PlayerBotStateMachine>() as EntityStateMachine;
+                    BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
+                    AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
+                    aiOwnership.ownerMaster = owner;
+
+                    CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
+                    PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
+                    playerMaster.name = "PlayerBot";
+
+                    // Random skin
+                    SetRandomSkin(master, bodyPrefab);
+
+                    // Set commponent values
+                    master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
+                    master.GiveMoney(owner.money);
+                    master.inventory.CopyItemsFrom(owner.inventory);
+                    master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
+                    master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
+
+                    // Add custom skills
+                    InjectSkillDrivers(gameObject, ai, survivorIndex);
+
+                    if (AutoPurchaseItems.Value)
+                    {
+                        // Add item manager
+                        ItemManager itemManager = gameObject.AddComponent<ItemManager>() as ItemManager;
+                    }
+
+                    // Add to playerbot list
+                    playerbots.Add(gameObject);
                 }
+            };
 
-                // Add to playerbot list
-                playerbots.Add(gameObject);
+            DirectorCore.instance.TrySpawnObject(spawnRequest);
 
-                // Cleanup
-                Destroy(card);
-            }
+            // Cleanup
+            Destroy(card);
         }
 
         // A hacky method. Don't ask questions.
@@ -481,7 +502,6 @@ namespace PlayerBots
             PropertyInfo property = typeof(BaseAI).GetProperty("skillDrivers");
             property.DeclaringType.GetProperty("skillDrivers");
             property.SetValue(ai, gameObject.GetComponents<AISkillDriver>(), BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
-            //ai.SetFieldValue2("skillDrivers", gameObject.GetComponents<AISkillDriver>());
 
             // Combat update timer fix
             gameObject.AddComponent<PlayerBotCombatFix>();
@@ -581,7 +601,7 @@ namespace PlayerBots
                 }
             }
 
-            if (!user || !user.master.alive)
+            if (!user || user.master.IsDeadAndOutOfLivesServer())
             {
                 return;
             }
@@ -633,7 +653,7 @@ namespace PlayerBots
                 }
             }
 
-            if (!user || !user.master.alive)
+            if (!user || user.master.IsDeadAndOutOfLivesServer())
             {
                 return;
             }

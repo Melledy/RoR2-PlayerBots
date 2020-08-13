@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Commando)]
-    class CommandoHelper : AiSkillHelper
+    [SkillHelperSurvivor(SurvivorIndex.Captain)]
+    class CaptainHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -18,8 +18,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
-            skill3.maxDistance = 20;
-            //skill3.maxUserHealthFraction = .25f;
+            skill3.maxDistance = 60;
             skill3.selectionRequiresTargetLoS = true;
             skill3.activationRequiresTargetLoS = false;
             skill3.activationRequiresAimConfirmation = false;
@@ -30,24 +29,6 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.noRepeat = false;
             skill3.shouldSprint = true;
             skill3.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
-
-            AISkillDriver skill4 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill4.customName = "Special";
-            skill4.skillSlot = RoR2.SkillSlot.Special;
-            skill4.requireSkillReady = true;
-            skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-            skill4.minDistance = 0;
-            skill4.maxDistance = 35;
-            skill4.selectionRequiresTargetLoS = true;
-            skill4.activationRequiresTargetLoS = true;
-            skill4.activationRequiresAimConfirmation = true;
-            skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
-            skill4.ignoreNodeGraph = false;
-            skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
-            skill4.shouldSprint = false;
-            skill4.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill2.customName = "Secondary";
