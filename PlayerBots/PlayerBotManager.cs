@@ -110,6 +110,16 @@ namespace PlayerBots
                 orig(self, body);
             };
 
+            // Random fix to make captains spawnable without errors in PlayerMode, theres probably a better way of doing this too
+            On.RoR2.CaptainDefenseMatrixController.OnServerMasterSummonGlobal += (orig, self, summonReport) =>
+            {
+                if (self.GetFieldValue<CharacterBody>("characterBody") == null)
+                {
+                    self.SetFieldValue<CharacterBody>("characterBody", self.GetComponent<CharacterBody>());
+                }
+                orig(self, summonReport);
+            };
+
             // Maybe there is a better way to do this
             if (ShowNameplates.Value && !PlayerMode.Value)
             {
@@ -291,16 +301,6 @@ namespace PlayerBots
                     c.GotoNext(x => x.MatchCallvirt<CharacterMaster>("get_playerCharacterMasterController"));
                     c.Index += 2;
                     c.EmitDelegate<Func<bool, bool>>(x => false);
-                };
-
-                // Random fix to make captains spawnable without errors in PlayerMode, theres probably a better way of doing this too
-                On.RoR2.CaptainDefenseMatrixController.OnServerMasterSummonGlobal += (orig, self, summonReport) =>
-                {
-                    if (self.GetFieldValue<CharacterBody>("characterBody") == null)
-                    {
-                        self.SetFieldValue<CharacterBody>("characterBody", self.GetComponent<CharacterBody>());
-                    }
-                    orig(self, summonReport);
                 };
             }
         }
