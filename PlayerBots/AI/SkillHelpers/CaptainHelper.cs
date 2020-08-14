@@ -18,7 +18,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
-            skill3.maxDistance = 60;
+            skill3.maxDistance = 50;
             skill3.selectionRequiresTargetLoS = true;
             skill3.activationRequiresTargetLoS = false;
             skill3.activationRequiresAimConfirmation = false;
@@ -26,8 +26,9 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.aimType = AISkillDriver.AimType.MoveDirection;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
-            skill3.noRepeat = false;
-            skill3.shouldSprint = true;
+            skill3.noRepeat = true;
+            skill3.shouldSprint = false;
+            skill3.driverUpdateTimerOverride = .01f;
             skill3.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
@@ -36,7 +37,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 40;
+            skill2.maxDistance = 50;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
@@ -66,6 +67,8 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.noRepeat = false;
             skill1.shouldSprint = false;
             skill1.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
+
+            skill3.nextHighPriorityOverride = skill1;
 
             // Add default skills
             AddDefaultSkills(gameObject, ai);

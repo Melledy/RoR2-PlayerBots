@@ -30,7 +30,7 @@ namespace PlayerBots
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco};
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco, SurvivorIndex.Captain};
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
@@ -292,6 +292,16 @@ namespace PlayerBots
                     c.Index += 2;
                     c.EmitDelegate<Func<bool, bool>>(x => false);
                 };
+
+                // Random fix to make captains spawnable without errors in PlayerMode, theres probably a better way of doing this too
+                On.RoR2.CaptainDefenseMatrixController.OnServerMasterSummonGlobal += (orig, self, summonReport) =>
+                {
+                    if (self.GetFieldValue<CharacterBody>("characterBody") == null)
+                    {
+                        self.SetFieldValue<CharacterBody>("characterBody", self.GetComponent<CharacterBody>());
+                    }
+                    orig(self, summonReport);
+                };
             }
         }
 
@@ -370,7 +380,7 @@ namespace PlayerBots
                     BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
                     AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
                     aiOwnership.ownerMaster = owner;
-
+ 
                     CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                     PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
                     playerMaster.name = "PlayerBot";
@@ -382,6 +392,7 @@ namespace PlayerBots
                     master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
+                    master.inventory.RemoveItem(ItemIndex.CaptainDefenseMatrix, owner.inventory.GetItemCount(ItemIndex.CaptainDefenseMatrix));
                     master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
                     master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
 
@@ -441,8 +452,9 @@ namespace PlayerBots
             if (gameObject)
             {
                 CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
-                AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
                 BaseAI ai = gameObject.GetComponent<BaseAI>();
+                AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
+                aiOwnership.ownerMaster = owner;
 
                 if (master)
                 {
@@ -455,15 +467,12 @@ namespace PlayerBots
 
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
+                    master.inventory.RemoveItem(ItemIndex.CaptainDefenseMatrix, owner.inventory.GetItemCount(ItemIndex.CaptainDefenseMatrix));
                     master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
 
                     // Allow the bots to spawn in the next stage
                     master.destroyOnBodyDeath = false;
                     master.gameObject.AddComponent<SetDontDestroyOnLoad>();
-                }
-                if (aiOwnership)
-                {
-                    aiOwnership.ownerMaster = owner;
                 }
                 if (ai)
                 {
