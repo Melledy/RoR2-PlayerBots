@@ -34,11 +34,11 @@ namespace PlayerBots
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
-        private static ConfigWrapper<int> InitialRandomBots { get; set; }
-        private static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[RandomSurvivors.Length];
+        public static ConfigWrapper<int> InitialRandomBots { get; set; }
+        public static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[RandomSurvivors.Length];
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
-        private static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
+        public static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
         public static ConfigWrapper<float> Tier1ChestBotWeight { get; set; }
         public static ConfigWrapper<int> Tier1ChestBotCost { get; set; }
         public static ConfigWrapper<float> Tier2ChestBotWeight { get; set; }
@@ -49,10 +49,10 @@ namespace PlayerBots
         public static ConfigWrapper<float> MinBuyingDelay { get; set; }
         public static ConfigWrapper<float> MaxBuyingDelay { get; set; }
         public static ConfigWrapper<bool> ShowBuyMessages { get; set; }
-        private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
-        private static ConfigWrapper<bool> ShowNameplates { get; set; }
-        private static ConfigWrapper<bool> PlayerMode { get; set; }
-        private static ConfigWrapper<bool> DontScaleInteractables { get; set; }
+        public static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
+        public static ConfigWrapper<bool> ShowNameplates { get; set; }
+        public static ConfigWrapper<bool> PlayerMode { get; set; }
+        public static ConfigWrapper<bool> DontScaleInteractables { get; set; }
 
         public void Awake()
         {
@@ -107,211 +107,11 @@ namespace PlayerBots
             // Sanity check
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
 
+            // Add console commands
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
 
-            // Ugh.
-            On.RoR2.CharacterAI.BaseAI.OnBodyLost += (orig, self, body) =>
-            {
-                if (self.name.Equals("PlayerBot"))
-                {
-                    return;
-                }
-                orig(self, body);
-            };
-
-            // Random fix to make captains spawnable without errors in PlayerMode, theres probably a better way of doing this too
-            On.RoR2.CaptainDefenseMatrixController.OnServerMasterSummonGlobal += (orig, self, summonReport) =>
-            {
-                if (self.GetFieldValue<CharacterBody>("characterBody") == null)
-                {
-                    self.SetFieldValue<CharacterBody>("characterBody", self.GetComponent<CharacterBody>());
-                }
-                orig(self, summonReport);
-            };
-
-            // Maybe there is a better way to do this
-            if (ShowNameplates.Value && !PlayerMode.Value)
-            {
-                IL.RoR2.TeamComponent.SetupIndicator += il =>
-                {
-                    ILCursor c = new ILCursor(il);
-                    c.GotoNext(x => x.MatchCallvirt<CharacterBody>("get_isPlayerControlled"));
-                    bool isPlayerBot = false;
-                    c.EmitDelegate<Func<CharacterBody, CharacterBody>>(x => 
-                        {
-                            isPlayerBot = x.master.name.Equals("PlayerBot");
-                            return x;
-                        }
-                    );
-                    c.Index += 1;
-                    c.EmitDelegate<Func<bool, bool>>(x =>
-                        {
-                            if (isPlayerBot) return true;
-                            return x;
-                        }
-                    );
-                };
-            }
-
-            if (!PlayerMode.Value && AutoPurchaseItems.Value)
-            {
-                // Give bots money
-                On.RoR2.TeamManager.GiveTeamMoney += (orig, self, teamIndex, money) =>
-                {
-                    orig(self, teamIndex, money);
-
-                    if (playerbots.Count > 0)
-                    {
-                        int num = Run.instance ? Run.instance.livingPlayerCount : 0;
-                        if (num != 0)
-                        {
-                            money = (uint)Mathf.CeilToInt(money / (float)num);
-                        }
-                        foreach (GameObject playerbot in playerbots)
-                        {
-                            if (!playerbot)
-                            {
-                                continue;
-                            }
-                            CharacterMaster master = playerbot.GetComponent<CharacterMaster>();
-                            if (master && !master.IsDeadAndOutOfLivesServer() && master.teamIndex == teamIndex)
-                            {
-                                master.GiveMoney(money);
-                            }
-                        }
-                    }
-                };
-            }
-
-            if (AutoPurchaseItems.Value)
-            {
-                On.RoR2.Run.BeginStage += (orig, self) =>
-                {
-                    foreach (GameObject playerbot in playerbots.ToArray())
-                    {
-                        if (!playerbot)
-                        {
-                            playerbots.Remove(playerbot);
-                            continue;
-                        }
-
-                        ItemManager itemManager = playerbot.GetComponent<ItemManager>();
-                        if (itemManager)
-                        {
-                            itemManager.ResetPurchases();
-                            itemManager.master.money = 0;
-                        }
-                    }
-                    orig(self);
-                };
-            }
-
-            On.RoR2.Stage.Start += (orig, self) =>
-            {
-                orig(self);
-                if (NetworkServer.active)
-                {
-                    if (PlayerMode.Value)
-                    {
-                        foreach (GameObject playerbot in playerbots.ToArray())
-                        {
-                            if (!playerbot)
-                            {
-                                playerbots.Remove(playerbot);
-                                continue;
-                            }
-
-                            CharacterMaster master = playerbot.GetComponent<CharacterMaster>();
-                            if (master)
-                            {
-                                Stage.instance.RespawnCharacter(master);
-                            }
-                        }
-                    }
-                    // Spawn starting bots
-                    if (Run.instance.stageClearCount == 0)
-                    {
-                        if (InitialRandomBots.Value > 0)
-                        {
-                            SpawnRandomPlayerbots(NetworkUser.readOnlyInstancesList[0].master, InitialRandomBots.Value);
-                        }
-                        for (int randomSurvivorsIndex = 0; randomSurvivorsIndex < InitialBots.Length; randomSurvivorsIndex++)
-                        {
-                            if (InitialBots[randomSurvivorsIndex].Value > 0)
-                            {
-                                SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, RandomSurvivors[randomSurvivorsIndex], InitialBots[randomSurvivorsIndex].Value);
-                            }
-                        }
-                    }
-                }
-            };
-
-            if (PlayerMode.Value)
-            {
-                On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
-                {
-                    if (DontScaleInteractables.Value)
-                    {
-                        int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
-                        float num = 0.5f + (float)count * 0.5f;
-                        ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
-                        int credit = (int)((float)component.sceneDirectorInteractibleCredits * num);
-                        if (component.bonusInteractibleCreditObjects != null)
-                        {
-                            for (int i = 0; i < component.bonusInteractibleCreditObjects.Length; i++)
-                            {
-                                ClassicStageInfo.BonusInteractibleCreditObject bonusInteractibleCreditObject = component.bonusInteractibleCreditObjects[i];
-                                if (bonusInteractibleCreditObject.objectThatGrantsPointsIfEnabled.activeSelf)
-                                {
-                                    credit += bonusInteractibleCreditObject.points;
-                                }
-                            }
-                        }
-                        self.interactableCredit = credit;
-                    }
-                    else if (Run.instance.stageClearCount == 0 && GetInitialBotCount() > 0)
-                    {
-                        int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
-                        count += GetInitialBotCount();
-                        float num = 0.5f + (float)count * 0.5f;
-                        ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
-                        int credit = (int)((float)component.sceneDirectorInteractibleCredits * num);
-                        if (component.bonusInteractibleCreditObjects != null)
-                        {
-                            for (int i = 0; i < component.bonusInteractibleCreditObjects.Length; i++)
-                            {
-                                ClassicStageInfo.BonusInteractibleCreditObject bonusInteractibleCreditObject = component.bonusInteractibleCreditObjects[i];
-                                if (bonusInteractibleCreditObject.objectThatGrantsPointsIfEnabled.activeSelf)
-                                {
-                                    credit += bonusInteractibleCreditObject.points;
-                                }
-                            }
-                        }
-                        self.interactableCredit = credit;
-                    }
-
-                    orig(self);
-                };
-
-                // Required for bots to even move, maybe switch to il later
-                On.RoR2.PlayerCharacterMasterController.Update += (orig, self) =>
-                {
-                    if (self.name.Equals("PlayerBot"))
-                    {
-                        //self.InvokeMethod("SetBody", new object[] { self.master.GetBodyObject() });
-                        return;
-                    }
-                    orig(self);
-                };
-
-                IL.RoR2.UI.AllyCardManager.PopulateCharacterDataSet += il =>
-                {
-                    ILCursor c = new ILCursor(il);
-                    c.GotoNext(x => x.MatchCallvirt<CharacterMaster>("get_playerCharacterMasterController"));
-                    c.Index += 2;
-                    c.EmitDelegate<Func<bool, bool>>(x => false);
-                };
-            }
+            // Apply hooks
+            PlayerBotHooks.AddHooks();
         }
 
         public void Start()
@@ -319,7 +119,7 @@ namespace PlayerBots
             AiSkillHelperCatalog.Populate();
         }
 
-        private static int GetInitialBotCount()
+        public static int GetInitialBotCount()
         {
             int count = InitialRandomBots.Value;
             for (int randomSurvivorsIndex = 0; randomSurvivorsIndex < InitialBots.Length; randomSurvivorsIndex++)
