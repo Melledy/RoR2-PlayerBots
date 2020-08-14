@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using EntityStates;
 using EntityStates.AI.Walker;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using PlayerBots.AI;
 using PlayerBots.Custom;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Networking;
+using Console = RoR2.Console;
 
 namespace PlayerBots
 {
@@ -96,7 +98,7 @@ namespace PlayerBots
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
-            DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", false);
+            DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
 
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
 
@@ -241,7 +243,6 @@ namespace PlayerBots
 
             if (PlayerMode.Value)
             {
-                /*
                 On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
                 {
                     if (DontScaleInteractables.Value)
@@ -249,7 +250,19 @@ namespace PlayerBots
                         int count = PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController v) => v.networkUser);
                         float num = 0.5f + (float)count * 0.5f;
                         ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
-                        self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+                        int credit = (int)((float)component.sceneDirectorInteractibleCredits * num);
+                        if (component.bonusInteractibleCreditObjects != null)
+                        {
+                            for (int i = 0; i < component.bonusInteractibleCreditObjects.Length; i++)
+                            {
+                                ClassicStageInfo.BonusInteractibleCreditObject bonusInteractibleCreditObject = component.bonusInteractibleCreditObjects[i];
+                                if (bonusInteractibleCreditObject.objectThatGrantsPointsIfEnabled.activeSelf)
+                                {
+                                    credit += bonusInteractibleCreditObject.points;
+                                }
+                            }
+                        }
+                        self.interactableCredit = credit;
                     }
                     else if (Run.instance.stageClearCount == 0 && GetInitialBotCount() > 0)
                     {
@@ -257,12 +270,23 @@ namespace PlayerBots
                         count += GetInitialBotCount();
                         float num = 0.5f + (float)count * 0.5f;
                         ClassicStageInfo component = SceneInfo.instance.GetComponent<ClassicStageInfo>();
-                        self.SetFieldValue("interactableCredit", (int)((float)component.sceneDirectorInteractibleCredits * num));
+                        int credit = (int)((float)component.sceneDirectorInteractibleCredits * num);
+                        if (component.bonusInteractibleCreditObjects != null)
+                        {
+                            for (int i = 0; i < component.bonusInteractibleCreditObjects.Length; i++)
+                            {
+                                ClassicStageInfo.BonusInteractibleCreditObject bonusInteractibleCreditObject = component.bonusInteractibleCreditObjects[i];
+                                if (bonusInteractibleCreditObject.objectThatGrantsPointsIfEnabled.activeSelf)
+                                {
+                                    credit += bonusInteractibleCreditObject.points;
+                                }
+                            }
+                        }
+                        self.interactableCredit = credit;
                     }
 
                     orig(self);
                 };
-                */
 
                 // Required for bots to even move, maybe switch to il later
                 On.RoR2.PlayerCharacterMasterController.Update += (orig, self) =>
