@@ -22,7 +22,7 @@ using Console = RoR2.Console;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.3.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.4.0")]
     [R2APISubmoduleDependency("CommandHelper")]
     public class PlayerBotManager : BaseUnityPlugin
     {
@@ -83,7 +83,7 @@ namespace PlayerBots
             }
 
             AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests. (Default: true)", true);
-            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage. (Default: 8)", 8);
+            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage. (Default: 10)", 10);
             Tier1ChestBotWeight = Config.Wrap("Bot Inventory", "Tier1ChestBotWeight", "Weight of a bot picking an item from a small chest's loot table. (Default: 0.8)", 0.8f);
             Tier2ChestBotWeight = Config.Wrap("Bot Inventory", "Tier2ChestBotWeight", "Weight of a bot picking an item from a large chest's loot table. (Default: 0.2)", 0.2f);
             Tier3ChestBotWeight = Config.Wrap("Bot Inventory", "Tier3ChestBotWeight", "Weight of a bot picking an item from a legendary chest's loot table. (Default: 0)", 0f);
@@ -95,7 +95,7 @@ namespace PlayerBots
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
-            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", true);
+            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
 
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
