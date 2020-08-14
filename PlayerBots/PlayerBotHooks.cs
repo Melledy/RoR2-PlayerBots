@@ -29,7 +29,7 @@ namespace PlayerBots
             {
                 if (self.GetFieldValue<CharacterBody>("characterBody") == null)
                 {
-                    self.SetFieldValue<CharacterBody>("characterBody", self.GetComponent<CharacterBody>());
+                    return;
                 }
                 orig(self, summonReport);
             };
