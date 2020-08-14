@@ -14,6 +14,9 @@ namespace PlayerBots
         private int purchases = 0;
         private int maxPurchases = 8;
 
+        private Run.FixedTimeStamp lastBuyCheck;
+        private float buyingDelay;
+
         private static readonly EquipmentIndex[] usableEquipment = new EquipmentIndex[] {
             EquipmentIndex.CommandMissile, EquipmentIndex.BFG, EquipmentIndex.Lightning, EquipmentIndex.CritOnUse,
             EquipmentIndex.Blackhole, EquipmentIndex.Fruit, EquipmentIndex.GainArmor, EquipmentIndex.Cleanse,
@@ -31,17 +34,28 @@ namespace PlayerBots
             this.chestPicker.AddChoice(ChestTier.RED, PlayerBotManager.Tier3ChestBotWeight.Value);
 
             ResetPurchases();
+            ResetBuyingDelay();
         }
 
         public void FixedUpdate()
         {
-            CheckBuy();
+            if (this.lastBuyCheck.timeSince >= this.buyingDelay)
+            {
+                CheckBuy();
+                ResetBuyingDelay();
+            }
         }
 
         public void ResetPurchases()
         {
             this.ResetChest();
             this.maxPurchases = GetMaxPurchases();
+        }
+
+        private void ResetBuyingDelay()
+        {
+            this.lastBuyCheck = Run.FixedTimeStamp.now;
+            this.buyingDelay = Random.Range(PlayerBotManager.MinBuyingDelay.Value, PlayerBotManager.MaxBuyingDelay.Value);
         }
 
         public void ResetChest()
@@ -117,7 +131,19 @@ namespace PlayerBots
                 PickupIndex dropPickup = Run.instance.treasureRng.NextElementUniform<PickupIndex>(dropList);
                 ItemIndex item = PickupCatalog.GetPickupDef(dropPickup).itemIndex;
                 this.master.inventory.GiveItem(item, 1);
-                Debug.Log(this.master.GetBody().GetUserName() + " bought a " + item);
+                // Chat
+                if (PlayerBotManager.ShowBuyMessages.Value)
+                {
+                    PickupDef pickupDef = PickupCatalog.GetPickupDef(dropPickup);
+                    Chat.SendBroadcastChat(new Chat.PlayerPickupChatMessage
+                    {
+                        subjectAsCharacterBody = this.master.GetBody(),
+                        baseToken = "PLAYER_PICKUP",
+                        pickupToken = ((pickupDef != null) ? pickupDef.nameToken : null) ?? PickupCatalog.invalidPickupToken,
+                        pickupColor = (pickupDef != null) ? pickupDef.baseColor : Color.black,
+                        pickupQuantity = 1
+                    });
+                }
             }
         }
 

@@ -46,6 +46,9 @@ namespace PlayerBots
         public static ConfigWrapper<float> Tier3ChestBotWeight { get; set; }
         public static ConfigWrapper<int> Tier3ChestBotCost { get; set; }
         public static ConfigWrapper<int> EquipmentBuyChance { get; set; }
+        public static ConfigWrapper<float> MinBuyingDelay { get; set; }
+        public static ConfigWrapper<float> MaxBuyingDelay { get; set; }
+        public static ConfigWrapper<bool> ShowBuyMessages { get; set; }
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
         private static ConfigWrapper<bool> PlayerMode { get; set; }
@@ -82,21 +85,27 @@ namespace PlayerBots
                 InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
             }
 
-            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests. (Default: true)", true);
-            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage. (Default: 10)", 10);
-            Tier1ChestBotWeight = Config.Wrap("Bot Inventory", "Tier1ChestBotWeight", "Weight of a bot picking an item from a small chest's loot table. (Default: 0.8)", 0.8f);
-            Tier2ChestBotWeight = Config.Wrap("Bot Inventory", "Tier2ChestBotWeight", "Weight of a bot picking an item from a large chest's loot table. (Default: 0.2)", 0.2f);
-            Tier3ChestBotWeight = Config.Wrap("Bot Inventory", "Tier3ChestBotWeight", "Weight of a bot picking an item from a legendary chest's loot table. (Default: 0)", 0f);
-            Tier1ChestBotCost = Config.Wrap("Bot Inventory", "Tier1ChestBotCost", "Base price of a small chest for the bot. (Default: 25)", 25);
-            Tier2ChestBotCost = Config.Wrap("Bot Inventory", "Tier2ChestBotCost", "Base price of a large chest for the bot. (Default: 50)", 50);
-            Tier3ChestBotCost = Config.Wrap("Bot Inventory", "Tier3ChestBotCost", "Base price of a legendary chest for the bot. (Default: 400)", 400);
+            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
+            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 10);
+            Tier1ChestBotWeight = Config.Wrap("Bot Inventory", "Tier1ChestBotWeight", "Weight of a bot picking an item from a small chest's loot table.", 0.8f);
+            Tier2ChestBotWeight = Config.Wrap("Bot Inventory", "Tier2ChestBotWeight", "Weight of a bot picking an item from a large chest's loot table.", 0.2f);
+            Tier3ChestBotWeight = Config.Wrap("Bot Inventory", "Tier3ChestBotWeight", "Weight of a bot picking an item from a legendary chest's loot table.", 0f);
+            Tier1ChestBotCost = Config.Wrap("Bot Inventory", "Tier1ChestBotCost", "Base price of a small chest for the bot.", 25);
+            Tier2ChestBotCost = Config.Wrap("Bot Inventory", "Tier2ChestBotCost", "Base price of a large chest for the bot.", 50);
+            Tier3ChestBotCost = Config.Wrap("Bot Inventory", "Tier3ChestBotCost", "Base price of a legendary chest for the bot.", 400);
             EquipmentBuyChance = Config.Wrap("Bot Inventory", "EquipmentBuyChance", "Chance between 0 and 100 for a bot to buy from an equipment barrel instead of a tier 1 chest. Only active while the bot does not have a equipment item. (Default: 15)", 15);
+            MinBuyingDelay = Config.Wrap("Bot Inventory", "MinBuyingDelay", "Minimum delay in seconds between the time it takes for a bot checks to buy an item.", 0f);
+            MaxBuyingDelay = Config.Wrap("Bot Inventory", "MaxBuyingDelay", "Maximum delay in seconds between the time it takes for a bot checks to buy an item.", 5f);
+            ShowBuyMessages = Config.Wrap("Bot Inventory", "ShowBuyMessages", "Displays whenever a bot buys an item in chat.", true);
 
             HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
-            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
+            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if PlayerMode == false. (Host only)", true);
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
+
+            // Sanity check
+            MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
 
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
 
