@@ -1,5 +1,6 @@
 ﻿using RoR2;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace PlayerBots
@@ -22,6 +23,8 @@ namespace PlayerBots
             EquipmentIndex.Blackhole, EquipmentIndex.Fruit, EquipmentIndex.GainArmor, EquipmentIndex.Cleanse,
             EquipmentIndex.PassiveHealing, EquipmentIndex.TeamWarCry, EquipmentIndex.DeathProjectile, EquipmentIndex.LifestealOnHit
         };
+
+        private static readonly List<PickupIndex> equipmentPickups = usableEquipment.Select(e => PickupCatalog.FindPickupIndex(e)).Where(e => e != null).ToList();
 
         public void Awake()
         {
@@ -112,8 +115,8 @@ namespace PlayerBots
                 case ChestTier.WHITE:
                     if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None && PlayerBotManager.EquipmentBuyChance.Value > UnityEngine.Random.Range(0, 100))
                     {
-                        this.master.inventory.SetEquipmentIndex(ItemManager.usableEquipment[UnityEngine.Random.Range(0, ItemManager.usableEquipment.Length)]);
-                        return;
+                        dropList = equipmentPickups;
+                        break;
                     }
                     dropList = Run.instance.smallChestDropTierSelector.Evaluate(UnityEngine.Random.value);
                     break;
@@ -129,8 +132,20 @@ namespace PlayerBots
             if (dropList != null && dropList.Count > 0)
             {
                 PickupIndex dropPickup = Run.instance.treasureRng.NextElementUniform<PickupIndex>(dropList);
-                ItemIndex item = PickupCatalog.GetPickupDef(dropPickup).itemIndex;
-                this.master.inventory.GiveItem(item, 1);
+                PickupDef pickup = PickupCatalog.GetPickupDef(dropPickup);
+                if (pickup.itemIndex != ItemIndex.None)
+                {
+                    this.master.inventory.GiveItem(pickup.itemIndex, 1);
+                }
+                else if (pickup.equipmentIndex != EquipmentIndex.None)
+                {
+                    this.master.inventory.SetEquipmentIndex(pickup.equipmentIndex);
+                }
+                else
+                {
+                    // Neither item nor equipment
+                    return;
+                }
                 // Chat
                 if (PlayerBotManager.ShowBuyMessages.Value)
                 {
