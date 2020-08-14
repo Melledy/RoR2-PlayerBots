@@ -49,7 +49,6 @@ namespace PlayerBots
         private static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
         private static ConfigWrapper<bool> ShowNameplates { get; set; }
         private static ConfigWrapper<bool> PlayerMode { get; set; }
-        private static ConfigWrapper<bool> TpFix { get; set; }
         private static ConfigWrapper<bool> DontScaleInteractables { get; set; }
 
         public void Awake()
@@ -97,7 +96,6 @@ namespace PlayerBots
             ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if SpawnAsPlayers == false. (Host only)", true);
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
-            TpFix = Config.Wrap("Player Mode", "Teleport Fix", "Fixes long teleporter charging times by making the bots count towards the charging timer. Only active is PlayerMode is true.", true);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
 
             R2API.Utils.CommandHelper.AddToConsoleWhenReady();
@@ -188,18 +186,6 @@ namespace PlayerBots
                     orig(self);
                 };
             }
-
-            /*
-            if (PlayerMode.Value && TpFix.Value)
-            {
-                On.RoR2.TeleporterInteraction.GetPlayerCountInRadius += (orig, self) =>
-                {
-                    Vector3 position = self.gameObject.transform.position;
-                    float num2 = self.clearRadius * self.clearRadius;
-                    return PlayerCharacterMasterController.instances.Count((PlayerCharacterMasterController c) => c.master.alive && (c.master.GetBody().transform.position - position).sqrMagnitude <= num2);
-                };
-            }
-            */
 
             On.RoR2.Stage.Start += (orig, self) =>
             {
