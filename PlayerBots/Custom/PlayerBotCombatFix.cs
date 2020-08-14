@@ -49,6 +49,7 @@ namespace PlayerBots.Custom
             {
                 case EquipmentIndex.CommandMissile:
                 case EquipmentIndex.Lightning:
+                case EquipmentIndex.DeathProjectile:
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
                     {
                         FireEquipment();
@@ -67,12 +68,19 @@ namespace PlayerBots.Custom
                         FireEquipment();
                     }
                     break;
+                case EquipmentIndex.TeamWarCry:
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.TeamWarCry))
+                    {
+                        FireEquipment();
+                    }
+                    break;
                 case EquipmentIndex.Blackhole:
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
                     {
                         FireEquipment();
                     }
                     break;
+                case EquipmentIndex.LifestealOnHit:
                 case EquipmentIndex.PassiveHealing:
                 case EquipmentIndex.Fruit:
                     if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(BuffIndex.HealingDisabled))
