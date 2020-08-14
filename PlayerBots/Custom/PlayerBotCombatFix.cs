@@ -21,6 +21,8 @@ namespace PlayerBots.Custom
 
         public void FixedUpdate()
         {
+            // Fix bunny hopping
+            this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
             // Remove the default combat delay with ai
             if (this.stateMachine.state is Combat)
             {
