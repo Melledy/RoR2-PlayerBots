@@ -281,6 +281,7 @@ namespace PlayerBots
                     ai.name = "PlayerBot";
                     ai.leader.gameObject = owner.GetBody().gameObject;
 
+                    ai.neverRetaliateFriendlies = true;
                     ai.fullVision = true;
                     ai.aimVectorDampTime = .01f;
                     ai.aimVectorMaxSpeed = 180f;

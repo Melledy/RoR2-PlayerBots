@@ -16,6 +16,7 @@ namespace PlayerBots.Custom
             this.enemyAttentionDuration = 5;
             this.navigationType = BaseAI.NavigationType.Nodegraph;
             this.selectedSkilldriverName = "";
+            this.neverRetaliateFriendlies = true;
         }
 
         public override void OnBodyDeath(CharacterBody characterBody)
