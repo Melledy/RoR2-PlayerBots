@@ -47,61 +47,69 @@ namespace PlayerBots.Custom
                 return;
             }
 
-            switch (this.master.inventory.currentEquipmentIndex)
+            try
             {
-                case EquipmentIndex.CommandMissile:
-                case EquipmentIndex.Lightning:
-                case EquipmentIndex.DeathProjectile:
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.BFG: // Dont spam preon at random mobs
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
-                        (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.CritOnUse:
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.FullCrit))
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.TeamWarCry:
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.TeamWarCry))
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.Blackhole:
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.LifestealOnHit:
-                case EquipmentIndex.PassiveHealing:
-                case EquipmentIndex.Fruit:
-                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(BuffIndex.HealingDisabled))
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.GainArmor:
-                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .35 && this.master.GetBody().healthComponent.timeSinceLastHit <= 1.0f)
-                    {
-                        FireEquipment();
-                    }
-                    break;
-                case EquipmentIndex.Cleanse:
-                    if (this.HasBuff(BuffIndex.OnFire) || this.HasBuff(BuffIndex.HealingDisabled))
-                    {
-                        FireEquipment();
-                    }
-                    break;
+                switch (this.master.inventory.currentEquipmentIndex)
+                {
+                    case EquipmentIndex.CommandMissile:
+                    case EquipmentIndex.Lightning:
+                    case EquipmentIndex.DeathProjectile:
+                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.BFG: // Dont spam preon at random mobs
+                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
+                            (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.CritOnUse:
+                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.FullCrit))
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.TeamWarCry:
+                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.TeamWarCry))
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.Blackhole:
+                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.LifestealOnHit:
+                    case EquipmentIndex.PassiveHealing:
+                    case EquipmentIndex.Fruit:
+                        if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(BuffIndex.HealingDisabled))
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.GainArmor:
+                        if (this.master.GetBody().healthComponent.combinedHealthFraction <= .35 && this.master.GetBody().healthComponent.timeSinceLastHit <= 1.0f)
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                    case EquipmentIndex.Cleanse:
+                        if (this.HasBuff(BuffIndex.OnFire) || this.HasBuff(BuffIndex.HealingDisabled))
+                        {
+                            FireEquipment();
+                        }
+                        break;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e);
+                Debug.Log("Error when bot is using: " + this.master.inventory.currentEquipmentIndex);
             }
         }
 
