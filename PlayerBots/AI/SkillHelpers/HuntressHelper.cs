@@ -46,6 +46,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.resetCurrentEnemyOnNextDriverSelection = true;
             skill4.noRepeat = false;
             skill4.shouldSprint = false;
+            skill4.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill2.customName = "Secondary";

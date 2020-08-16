@@ -20,10 +20,10 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.minDistance = 0;
             skill3.maxDistance = 50;
             skill3.selectionRequiresTargetLoS = true;
-            skill3.activationRequiresTargetLoS = false;
-            skill3.activationRequiresAimConfirmation = false;
-            skill3.movementType = AISkillDriver.MovementType.FleeMoveTarget;
-            skill3.aimType = AISkillDriver.AimType.MoveDirection;
+            skill3.activationRequiresTargetLoS = true;
+            skill3.activationRequiresAimConfirmation = true;
+            skill3.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill3.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
             skill3.noRepeat = true;
