@@ -1,23 +1,15 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using EntityStates;
-using EntityStates.AI.Walker;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
 using PlayerBots.AI;
 using PlayerBots.Custom;
 using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Navigation;
-using RoR2.Stats;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.Networking;
-using Console = RoR2.Console;
 
 namespace PlayerBots
 {
@@ -30,7 +22,7 @@ namespace PlayerBots
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco, SurvivorIndex.Captain};
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco, SurvivorIndex.Captain };
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
@@ -189,7 +181,7 @@ namespace PlayerBots
                     BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
                     AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
                     aiOwnership.ownerMaster = owner;
- 
+
                     CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                     PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
                     playerMaster.name = "PlayerBot";
@@ -310,7 +302,7 @@ namespace PlayerBots
         {
             int bodyIndex = bodyPrefab.GetComponent<CharacterBody>().bodyIndex;
             SkinDef[] skins = BodyCatalog.GetBodySkins(bodyIndex);
-            master.loadout.bodyLoadoutManager.SetSkinIndex(bodyIndex, (uint) UnityEngine.Random.Range(0, skins.Length));
+            master.loadout.bodyLoadoutManager.SetSkinIndex(bodyIndex, (uint)UnityEngine.Random.Range(0, skins.Length));
         }
 
         private static void InjectSkillDrivers(GameObject gameObject, BaseAI ai, SurvivorIndex survivorIndex)
@@ -395,7 +387,7 @@ namespace PlayerBots
                     SurvivorIndex index;
                     if (SurvivorDict.TryGetValue(classString.ToLower(), out index))
                     {
-                        characterType = (int) index;
+                        characterType = (int)index;
                     }
                     else
                     {
@@ -434,7 +426,7 @@ namespace PlayerBots
                 return;
             }
 
-            SpawnPlayerbots(user.master, (SurvivorIndex) characterType, amount);
+            SpawnPlayerbots(user.master, (SurvivorIndex)characterType, amount);
 
             Debug.Log(user.userName + " spawned " + amount + " bots for " + user.userName);
         }
@@ -644,7 +636,7 @@ namespace PlayerBots
             Debug.Log("Listing all registered survivors and their indexes.");
             foreach (SurvivorDef def in SurvivorCatalog.allSurvivorDefs)
             {
-                Debug.Log(def.bodyPrefab.GetComponent<CharacterBody>().GetDisplayName() + " : " + (int) def.survivorIndex);
+                Debug.Log(def.bodyPrefab.GetComponent<CharacterBody>().GetDisplayName() + " : " + (int)def.survivorIndex);
             }
         }
     }

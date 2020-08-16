@@ -1,9 +1,6 @@
 ﻿using EntityStates;
 using EntityStates.AI.Walker;
 using RoR2;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PlayerBots.Custom
 {

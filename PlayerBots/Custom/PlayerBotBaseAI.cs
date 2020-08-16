@@ -2,10 +2,6 @@
 using EntityStates.AI.Walker;
 using RoR2;
 using RoR2.CharacterAI;
-using RoR2.Navigation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PlayerBots.Custom
 {

@@ -156,7 +156,7 @@ namespace PlayerBots
                         baseToken = "PLAYER_PICKUP",
                         pickupToken = ((pickupDef != null) ? pickupDef.nameToken : null) ?? PickupCatalog.invalidPickupToken,
                         pickupColor = (pickupDef != null) ? pickupDef.baseColor : Color.black,
-                        pickupQuantity = pickup.itemIndex != ItemIndex.None ? (uint) this.master.inventory.GetItemCount(pickup.itemIndex) : 1
+                        pickupQuantity = pickup.itemIndex != ItemIndex.None ? (uint)this.master.inventory.GetItemCount(pickup.itemIndex) : 1
                     });
                 }
             }

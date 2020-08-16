@@ -58,7 +58,7 @@ namespace PlayerBots.Custom
                     }
                     break;
                 case EquipmentIndex.BFG: // Dont spam preon at random mobs
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS && 
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
                         (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
                     {
                         FireEquipment();
