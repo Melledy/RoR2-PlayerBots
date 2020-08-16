@@ -516,7 +516,7 @@ namespace PlayerBots
             }
         }
 
-        [ConCommand(commandName = "freezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
+        [ConCommand(commandName = "freezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Freezes all bots")]
         private static void CCFreezeBots(ConCommandArgs args)
         {
             foreach (GameObject gameObject in playerbots)
@@ -531,7 +531,7 @@ namespace PlayerBots
             }
         }
 
-        [ConCommand(commandName = "unfreezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
+        [ConCommand(commandName = "unfreezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Unfreezes all bots")]
         private static void CCUnfreezeBots(ConCommandArgs args)
         {
             foreach (GameObject gameObject in playerbots)
@@ -541,6 +541,34 @@ namespace PlayerBots
                     BaseAI ai = gameObject.GetComponent<BaseAI>();
                     ai.enabled = true;
                     ai.stateMachine.SetState(EntityState.Instantiate(ai.scanState));
+                }
+            }
+        }
+
+        [ConCommand(commandName = "tpbots", flags = ConVarFlags.SenderMustBeServer, helpText = "Teleports all bots to you")]
+        private static void CCTpBots(ConCommandArgs args)
+        {
+            NetworkUser user = args.sender;
+
+            if (Stage.instance == null || user.master == null || user.master.IsDeadAndOutOfLivesServer())
+            {
+                return;
+            }
+
+            foreach (GameObject gameObject in playerbots)
+            {
+                if (gameObject)
+                {
+                    CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
+
+                    if (!master.IsDeadAndOutOfLivesServer())
+                    {
+                        TeleportHelper.TeleportGameObject(master.GetBody().gameObject, new Vector3(
+                            user.master.GetBody().transform.position.x,
+                            user.master.GetBody().transform.position.y,
+                            user.master.GetBody().transform.position.z
+                        ));
+                    }
                 }
             }
         }
