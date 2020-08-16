@@ -69,7 +69,15 @@ namespace PlayerBots.Custom
                     case EquipmentIndex.CritOnUse:
                         if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.FullCrit))
                         {
-                            FireEquipment();
+                            if (this.master.GetBody().crit >= 100f)
+                            {
+                                // 100% crit already - no need for this item anymore
+                                this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                            }
+                            else
+                            {
+                                FireEquipment();
+                            }
                         }
                         break;
                     case EquipmentIndex.TeamWarCry:
