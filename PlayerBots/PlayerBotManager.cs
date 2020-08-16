@@ -16,6 +16,7 @@ namespace PlayerBots
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.4.0")]
     [R2APISubmoduleDependency("CommandHelper")]
+    [NetworkCompatibility(CompatibilityLevel.NoNeedForSync)]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
