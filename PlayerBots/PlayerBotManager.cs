@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using EntityStates;
 using PlayerBots.AI;
 using PlayerBots.Custom;
 using R2API.Utils;
@@ -507,10 +508,41 @@ namespace PlayerBots
         {
             foreach (GameObject gameObject in playerbots)
             {
-                CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
-                master.TrueKill();
+                if (gameObject)
+                {
+                    CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
+                    master.TrueKill();
+                }
             }
+        }
 
+        [ConCommand(commandName = "freezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
+        private static void CCFreezeBots(ConCommandArgs args)
+        {
+            foreach (GameObject gameObject in playerbots)
+            {
+                if (gameObject)
+                {
+                    BaseAI ai = gameObject.GetComponent<BaseAI>();
+                    ai.enabled = false;
+                    ai.bodyInputBank.moveVector = Vector3.zero;
+                    ai.stateMachine.SetState(new Idle());
+                }
+            }
+        }
+
+        [ConCommand(commandName = "unfreezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Removes all bots")]
+        private static void CCUnfreezeBots(ConCommandArgs args)
+        {
+            foreach (GameObject gameObject in playerbots)
+            {
+                if (gameObject)
+                {
+                    BaseAI ai = gameObject.GetComponent<BaseAI>();
+                    ai.enabled = true;
+                    ai.stateMachine.SetState(EntityState.Instantiate(ai.scanState));
+                }
+            }
         }
 
         [ConCommand(commandName = "pb_startingbots", flags = ConVarFlags.None, helpText = "Set initial bot count [character type] [amount]")]
