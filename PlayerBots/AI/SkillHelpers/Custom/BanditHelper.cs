@@ -1,15 +1,16 @@
 ﻿using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace PlayerBots.AI.SkillHelpers
+namespace PlayerBots.AI.SkillHelpers.Custom
 {
-    [SkillHelperSurvivor("BanditBody")]
+    [SkillHelperSurvivor("BanditReloadedBody")]
+    [CustomSurvivor("https://thunderstore.io/package/Moffein/BanditReloaded/", "2.1.2")]
     class BanditHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
             // Edit
-            ai.minDistanceFromEnemy = 20;
+            ai.minDistanceFromEnemy = 15;
 
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill3.customName = "Utility";
@@ -40,7 +41,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
             skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
             skill4.noRepeat = false;
@@ -52,12 +53,12 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 50;
+            skill2.maxDistance = 60;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
             skill2.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill2.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill2.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill2.ignoreNodeGraph = false;
             skill2.resetCurrentEnemyOnNextDriverSelection = false;
             skill2.noRepeat = false;
@@ -75,7 +76,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.activationRequiresTargetLoS = true;
             skill1.activationRequiresAimConfirmation = true;
             skill1.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill1.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill1.ignoreNodeGraph = false;
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;
