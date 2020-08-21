@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
-    [SkillHelperSurvivor("TwitchBody")]
-    [CustomSurvivor("https://thunderstore.io/package/rob/Twitch/", "2.1.0")]
-    class TwitchHelper : AiSkillHelper
+    [SkillHelperSurvivor("WildBody")]
+    [CustomSurvivor("https://thunderstore.io/package/RavensQueen/TheWild/", "5.3.0")]
+    class TheWildHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -18,12 +18,12 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
-            skill3.maxDistance = 60;
+            skill3.maxDistance = 50;
             skill3.selectionRequiresTargetLoS = true;
-            skill3.activationRequiresTargetLoS = false;
-            skill3.activationRequiresAimConfirmation = false;
-            skill3.movementType = AISkillDriver.MovementType.FleeMoveTarget;
-            skill3.aimType = AISkillDriver.AimType.MoveDirection;
+            skill3.activationRequiresTargetLoS = true;
+            skill3.activationRequiresAimConfirmation = true;
+            skill3.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill3.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
             skill3.noRepeat = true;
@@ -35,7 +35,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill4.requireSkillReady = true;
             skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill4.minDistance = 0;
-            skill4.maxDistance = 60;
+            skill4.maxDistance = 50;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
@@ -43,7 +43,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
+            skill4.noRepeat = true;
             skill4.shouldSprint = false;
 
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
@@ -52,7 +52,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 40;
+            skill2.maxDistance = 50;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
@@ -70,7 +70,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill1.requireSkillReady = true;
             skill1.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill1.minDistance = 0;
-            skill1.maxDistance = 60;
+            skill1.maxDistance = 50;
             skill1.selectionRequiresTargetLoS = true;
             skill1.activationRequiresTargetLoS = true;
             skill1.activationRequiresAimConfirmation = true;

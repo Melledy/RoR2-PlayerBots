@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
-    [SkillHelperSurvivor("TwitchBody")]
-    [CustomSurvivor("https://thunderstore.io/package/rob/Twitch/", "2.1.0")]
-    class TwitchHelper : AiSkillHelper
+    [SkillHelperSurvivor("HybridBody")]
+    [CustomSurvivor("https://thunderstore.io/package/RavensQueen/TheHybrid/", "6.5.0")]
+    class TheHybridHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -19,14 +19,15 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
             skill3.maxDistance = 60;
-            skill3.selectionRequiresTargetLoS = true;
+            skill3.maxUserHealthFraction = .25f;
+            skill3.selectionRequiresTargetLoS = false;
             skill3.activationRequiresTargetLoS = false;
             skill3.activationRequiresAimConfirmation = false;
             skill3.movementType = AISkillDriver.MovementType.FleeMoveTarget;
             skill3.aimType = AISkillDriver.AimType.MoveDirection;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
-            skill3.noRepeat = true;
+            skill3.noRepeat = false;
             skill3.shouldSprint = true;
 
             AISkillDriver skill4 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
@@ -52,7 +53,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 40;
+            skill2.maxDistance = 60;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
