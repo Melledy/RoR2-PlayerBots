@@ -42,7 +42,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.activationRequiresTargetLoS = true;
             skill1.activationRequiresAimConfirmation = true;
             skill1.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill1.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill1.ignoreNodeGraph = false;
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;
@@ -59,7 +59,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
             skill2.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill2.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill2.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill2.ignoreNodeGraph = false;
             skill2.resetCurrentEnemyOnNextDriverSelection = false;
             skill2.noRepeat = false;
@@ -76,11 +76,12 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
             skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
             skill4.noRepeat = false;
             skill4.shouldSprint = false;
+            skill4.buttonPressType = AISkillDriver.ButtonPressType.Hold;
 
             // Add default skills
             AddDefaultSkills(gameObject, ai);

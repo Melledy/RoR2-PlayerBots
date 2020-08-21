@@ -64,22 +64,22 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.noRepeat = false;
             skill2.shouldSprint = true;
 
-            AISkillDriver skill5 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill5.customName = "ChaseTarget";
-            skill5.skillSlot = RoR2.SkillSlot.None;
-            skill5.requireSkillReady = false;
-            skill5.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-            skill5.minDistance = 10;
-            skill5.maxDistance = 60;
-            skill5.selectionRequiresTargetLoS = true;
-            skill5.activationRequiresTargetLoS = true;
-            skill5.activationRequiresAimConfirmation = false;
-            skill5.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
-            skill5.aimType = AISkillDriver.AimType.AtMoveTarget;
-            skill5.ignoreNodeGraph = false;
-            skill5.resetCurrentEnemyOnNextDriverSelection = false;
-            skill5.noRepeat = false;
-            skill5.shouldSprint = true;
+            AISkillDriver chaseSkill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
+            chaseSkill.customName = "ChaseTarget";
+            chaseSkill.skillSlot = RoR2.SkillSlot.None;
+            chaseSkill.requireSkillReady = false;
+            chaseSkill.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
+            chaseSkill.minDistance = 10;
+            chaseSkill.maxDistance = 60;
+            chaseSkill.selectionRequiresTargetLoS = true;
+            chaseSkill.activationRequiresTargetLoS = true;
+            chaseSkill.activationRequiresAimConfirmation = false;
+            chaseSkill.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
+            chaseSkill.aimType = AISkillDriver.AimType.AtMoveTarget;
+            chaseSkill.ignoreNodeGraph = false;
+            chaseSkill.resetCurrentEnemyOnNextDriverSelection = false;
+            chaseSkill.noRepeat = false;
+            chaseSkill.shouldSprint = true;
 
             // Skills
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
