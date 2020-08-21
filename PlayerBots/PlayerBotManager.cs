@@ -397,6 +397,8 @@ namespace PlayerBots
                     else
                     {
                         characterType = 0;
+                        Debug.LogError("No survivor with that name exists.");
+                        return;
                     }
                 }
             }
