@@ -44,6 +44,7 @@ namespace PlayerBots.AI
                     if (PlayerBotUtils.TryGetSurvivorIndexByBodyPrefabName(skillHelperSurvivor.BodyPrefabName, out index))
                     {
                         PlayerBotManager.SurvivorDict.Add(BodyCatalog.FindBodyPrefab(skillHelperSurvivor.BodyPrefabName).GetComponent<CharacterBody>().GetDisplayName().ToLower(), index);
+                        PlayerBotManager.RandomSurvivorsList.Add(index);
                     }
                     else
                     {
@@ -94,6 +95,27 @@ namespace PlayerBots.AI
         }
 
         public string BodyPrefabName
+        {
+            get;
+            private set;
+        }
+    }
+
+    class CustomSurvivor : Attribute
+    {
+        public CustomSurvivor(String homepage, String perferredVersion)
+        {
+            this.Homepage = homepage;
+            this.PerferredVersion = perferredVersion;
+        }
+
+        public String Homepage
+        {
+            get;
+            private set;
+        }
+
+        public String PerferredVersion
         {
             get;
             private set;

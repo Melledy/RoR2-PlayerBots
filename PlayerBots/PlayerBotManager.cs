@@ -9,6 +9,7 @@ using RoR2.CharacterAI;
 using RoR2.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ namespace PlayerBots
         public static List<GameObject> playerbots = new List<GameObject>();
 
         public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco, SurvivorIndex.Captain };
+        public static List<SurvivorIndex> RandomSurvivorsList = RandomSurvivors.ToList();
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
@@ -346,11 +348,11 @@ namespace PlayerBots
                 int randomSurvivorIndex = -1;
                 do
                 {
-                    randomSurvivorIndex = random.Next(0, RandomSurvivors.Length);
+                    randomSurvivorIndex = random.Next(0, RandomSurvivorsList.Count);
                 }
-                while (randomSurvivorIndex == lastCharacterType && RandomSurvivors.Length > 1);
+                while (randomSurvivorIndex == lastCharacterType && RandomSurvivorsList.Count > 1);
 
-                SpawnPlayerbot(owner, RandomSurvivors[randomSurvivorIndex]);
+                SpawnPlayerbot(owner, RandomSurvivorsList[randomSurvivorIndex]);
 
                 lastCharacterType = randomSurvivorIndex;
             }
@@ -698,7 +700,7 @@ namespace PlayerBots
             Debug.Log("Listing all registered survivors and their indexes.");
             foreach (SurvivorDef def in SurvivorCatalog.allSurvivorDefs)
             {
-                Debug.Log(def.bodyPrefab.GetComponent<CharacterBody>().GetDisplayName() + " : " + (int)def.survivorIndex);
+                Debug.Log(def.bodyPrefab.GetComponent<CharacterBody>().GetDisplayName() + " (" + def.bodyPrefab.name  + ") : " + (int)def.survivorIndex);
             }
         }
     }
