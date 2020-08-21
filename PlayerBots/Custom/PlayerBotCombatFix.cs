@@ -118,6 +118,7 @@ namespace PlayerBots.Custom
             {
                 Debug.LogError(e);
                 Debug.Log("Error when bot is using: " + this.master.inventory.currentEquipmentIndex);
+                this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
             }
         }
 
