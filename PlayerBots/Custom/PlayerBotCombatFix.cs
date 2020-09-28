@@ -112,6 +112,9 @@ namespace PlayerBots.Custom
                             FireEquipment();
                         }
                         break;
+                    default:
+                        this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                        break;
                 }
             }
             catch (System.Exception e)

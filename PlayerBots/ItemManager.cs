@@ -115,7 +115,7 @@ namespace PlayerBots
                 case ChestTier.WHITE:
                     if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None && PlayerBotManager.EquipmentBuyChance.Value > UnityEngine.Random.Range(0, 100))
                     {
-                        dropList = equipmentPickups;
+                        dropList = Run.instance.availableEquipmentDropList;
                         break;
                     }
                     dropList = Run.instance.smallChestDropTierSelector.Evaluate(UnityEngine.Random.value);
@@ -143,7 +143,7 @@ namespace PlayerBots
                 }
                 else
                 {
-                    // Neither item nor equipment
+                    // Neither item nor valid equipment
                     return;
                 }
                 // Chat
