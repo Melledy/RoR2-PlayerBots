@@ -16,7 +16,7 @@ using UnityEngine;
 namespace PlayerBots
 {
     [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.4.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.4.1")]
     [R2APISubmoduleDependency("CommandHelper")]
     [NetworkCompatibility(CompatibilityLevel.NoNeedForSync)]
     public class PlayerBotManager : BaseUnityPlugin

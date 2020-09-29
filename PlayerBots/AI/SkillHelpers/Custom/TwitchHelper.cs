@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
     [SkillHelperSurvivor("TwitchBody")]
-    [CustomSurvivor("https://thunderstore.io/package/rob/Twitch/", "2.1.0")]
+    [CustomSurvivor("https://thunderstore.io/package/rob/Twitch/", "2.1.1")]
     class TwitchHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)

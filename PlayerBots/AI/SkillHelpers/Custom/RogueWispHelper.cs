@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
     [SkillHelperSurvivor("RogueWispBody")]
-    [CustomSurvivor("https://thunderstore.io/package/Rein/RogueWisp/", "2.1.10")]
+    [CustomSurvivor("https://thunderstore.io/package/Rein/RogueWisp/", "2.1.11")]
     class RogueWispHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
