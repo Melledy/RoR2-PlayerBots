@@ -321,6 +321,7 @@ namespace PlayerBots
 
             // Add skill drivers based on class
             AiSkillHelper skillHelper = AiSkillHelperCatalog.GetSkillHelperByIndex(survivorIndex);
+            skillHelper.AddCustomTargetLeash(gameObject, ai);
             skillHelper.InjectSkills(gameObject, ai);
 
             // Set skill drivers

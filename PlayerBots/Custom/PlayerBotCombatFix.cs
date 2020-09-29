@@ -11,6 +11,7 @@ namespace PlayerBots.Custom
         private EntityStateMachine stateMachine;
         private BaseAI ai;
         private Run.FixedTimeStamp lastEquipmentUse;
+        private Stage currentStage;
 
         public void Awake()
         {
@@ -21,6 +22,24 @@ namespace PlayerBots.Custom
 
         public void FixedUpdate()
         {
+            // Check if stage has changed
+            if (Stage.instance != this.currentStage)
+            {
+                this.currentStage = Stage.instance;
+                if (this.currentStage.sceneDef.baseSceneName.Equals("moon"))
+                {
+                    ChildLocator childLocator = SceneInfo.instance.GetComponent<ChildLocator>();
+                    if (childLocator)
+                    {
+                        Transform transform = childLocator.FindChild("CenterOfArena");
+                        if (transform)
+                        {
+                            ai.customTarget.gameObject = transform.gameObject;
+                            TeleportHelper.TeleportBody(master.GetBody(), transform.position);
+                        }
+                    }
+                }
+            }
             // Fix bunny hopping
             this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
             // Remove the default combat delay with ai
