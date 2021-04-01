@@ -26,19 +26,6 @@ namespace PlayerBots.Custom
             if (Stage.instance != this.currentStage)
             {
                 this.currentStage = Stage.instance;
-                if (this.currentStage.sceneDef.baseSceneName.Equals("moon"))
-                {
-                    ChildLocator childLocator = SceneInfo.instance.GetComponent<ChildLocator>();
-                    if (childLocator)
-                    {
-                        Transform transform = childLocator.FindChild("CenterOfArena");
-                        if (transform)
-                        {
-                            ai.customTarget.gameObject = transform.gameObject;
-                            TeleportHelper.TeleportBody(master.GetBody(), transform.position);
-                        }
-                    }
-                }
             }
             // Fix bunny hopping
             this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
