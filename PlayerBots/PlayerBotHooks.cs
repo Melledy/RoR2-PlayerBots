@@ -141,7 +141,7 @@ namespace PlayerBots
                         {
                             if (PlayerBotManager.InitialBots[randomSurvivorsIndex].Value > 0)
                             {
-                                PlayerBotManager.SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, PlayerBotManager.RandomSurvivors[randomSurvivorsIndex], PlayerBotManager.InitialBots[randomSurvivorsIndex].Value);
+                                PlayerBotManager.SpawnPlayerbots(NetworkUser.readOnlyInstancesList[0].master, PlayerBotManager.RandomSurvivorsList[randomSurvivorsIndex], PlayerBotManager.InitialBots[randomSurvivorsIndex].Value);
                             }
                         }
                     }

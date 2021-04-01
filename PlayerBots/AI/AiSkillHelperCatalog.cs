@@ -47,8 +47,8 @@ namespace PlayerBots.AI
                         if (!PlayerBotManager.SurvivorDict.ContainsKey(name))
                         {
                             PlayerBotManager.SurvivorDict.Add(name, index);
-                            PlayerBotManager.RandomSurvivorsList.Add(index);
-                        } 
+                        }
+                        PlayerBotManager.RandomSurvivorsList.Add(index);
                     }
                     else
                     {

@@ -20,25 +20,12 @@ namespace PlayerBots
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] {
-            SurvivorCatalog.FindSurvivorIndex("Commando"),
-            SurvivorCatalog.FindSurvivorIndex("Toolbot"), 
-            SurvivorCatalog.FindSurvivorIndex("Huntress"), 
-            SurvivorCatalog.FindSurvivorIndex("Engi"), 
-            SurvivorCatalog.FindSurvivorIndex("Mage"), 
-            SurvivorCatalog.FindSurvivorIndex("Merc"), 
-            SurvivorCatalog.FindSurvivorIndex("Treebot"), 
-            SurvivorCatalog.FindSurvivorIndex("Loader"), 
-            SurvivorCatalog.FindSurvivorIndex("Croco"), 
-            SurvivorCatalog.FindSurvivorIndex("Captain")
-        };
-        
-        public static List<SurvivorIndex> RandomSurvivorsList = RandomSurvivors.ToList();
+        public static List<SurvivorIndex> RandomSurvivorsList = new List<SurvivorIndex>();
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
         public static ConfigWrapper<int> InitialRandomBots { get; set; }
-        public static ConfigWrapper<int>[] InitialBots = new ConfigWrapper<int>[RandomSurvivors.Length];
+        public static ConfigWrapper<int>[] InitialBots;
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
         public static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
@@ -82,11 +69,6 @@ namespace PlayerBots
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
-            for (int i = 0; i < RandomSurvivors.Length; i++)
-            {
-                string name = RandomSurvivors[i].ToString();
-                InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
-            }
 
             AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
             MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 10);
@@ -124,6 +106,14 @@ namespace PlayerBots
         public void Start()
         {
             AiSkillHelperCatalog.Populate();
+
+            // Config
+            InitialBots = new ConfigWrapper<int>[RandomSurvivorsList.Count];
+            for (int i = 0; i < RandomSurvivorsList.Count; i++)
+            {
+                string name = BodyCatalog.GetBodyName(SurvivorCatalog.GetBodyIndexFromSurvivorIndex(RandomSurvivorsList[i]));
+                InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
+            }
         }
 
         public static int GetInitialBotCount()
@@ -581,7 +571,7 @@ namespace PlayerBots
                 }
 
                 // Clamp
-                characterType = Math.Max(Math.Min(characterType, RandomSurvivors.Length - 1), 0);
+                characterType = Math.Max(Math.Min(characterType, RandomSurvivorsList.Count - 1), 0);
             }
             else
             {
@@ -600,7 +590,7 @@ namespace PlayerBots
             }
 
             InitialBots[characterType].Value = amount;
-            Debug.Log("Set StartingBots." + RandomSurvivors[characterType].ToString() + " to " + amount);
+            Debug.Log("Set StartingBots." + RandomSurvivorsList[characterType].ToString() + " to " + amount);
         }
 
         [ConCommand(commandName = "pb_startingbots_random", flags = ConVarFlags.None, helpText = "Set initial random bot count [amount]")]
