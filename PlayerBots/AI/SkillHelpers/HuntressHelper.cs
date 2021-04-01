@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Huntress)]
+    [SkillHelperSurvivor("HuntressBody")]
     class HuntressHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 20;
-
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill3.customName = "Utility";
             skill3.skillSlot = RoR2.SkillSlot.Utility;
@@ -86,7 +83,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.nextHighPriorityOverride = skill1;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 20);
         }
     }
 }

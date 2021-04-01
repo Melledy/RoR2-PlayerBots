@@ -14,7 +14,6 @@ namespace PlayerBots.Custom
             this.aimVectorDampTime = .01f;
             this.aimVectorMaxSpeed = 180f;
             this.enemyAttentionDuration = 5;
-            this.navigationType = BaseAI.NavigationType.Nodegraph;
             this.selectedSkilldriverName = "";
             this.neverRetaliateFriendlies = true;
         }

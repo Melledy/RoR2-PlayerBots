@@ -9,9 +9,6 @@ namespace PlayerBots.AI.SkillHelpers.Custom
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 15;
-
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill2.customName = "Secondary";
             skill2.skillSlot = RoR2.SkillSlot.Secondary;
@@ -84,7 +81,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill1.shouldSprint = false;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 15);
         }
     }
 }

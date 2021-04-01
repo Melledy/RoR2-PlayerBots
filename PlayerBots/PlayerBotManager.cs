@@ -1,9 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using EntityStates;
 using PlayerBots.AI;
 using PlayerBots.Custom;
-using R2API.Utils;
 using RoR2;
 using RoR2.CharacterAI;
 using RoR2.Navigation;
@@ -15,17 +13,26 @@ using UnityEngine;
 
 namespace PlayerBots
 {
-    [BepInDependency("com.bepis.r2api")]
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.4.1")]
-    [R2APISubmoduleDependency("CommandHelper")]
-    [NetworkCompatibility(CompatibilityLevel.NoNeedForSync)]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.5.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
 
         public static List<GameObject> playerbots = new List<GameObject>();
 
-        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] { SurvivorIndex.Commando, SurvivorIndex.Toolbot, SurvivorIndex.Huntress, SurvivorIndex.Engi, SurvivorIndex.Mage, SurvivorIndex.Merc, SurvivorIndex.Treebot, SurvivorIndex.Loader, SurvivorIndex.Croco, SurvivorIndex.Captain };
+        public static SurvivorIndex[] RandomSurvivors = new SurvivorIndex[] {
+            SurvivorCatalog.FindSurvivorIndex("Commando"),
+            SurvivorCatalog.FindSurvivorIndex("Toolbot"), 
+            SurvivorCatalog.FindSurvivorIndex("Huntress"), 
+            SurvivorCatalog.FindSurvivorIndex("Engi"), 
+            SurvivorCatalog.FindSurvivorIndex("Mage"), 
+            SurvivorCatalog.FindSurvivorIndex("Merc"), 
+            SurvivorCatalog.FindSurvivorIndex("Treebot"), 
+            SurvivorCatalog.FindSurvivorIndex("Loader"), 
+            SurvivorCatalog.FindSurvivorIndex("Croco"), 
+            SurvivorCatalog.FindSurvivorIndex("Captain")
+        };
+        
         public static List<SurvivorIndex> RandomSurvivorsList = RandomSurvivors.ToList();
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
@@ -52,26 +59,26 @@ namespace PlayerBots
 
         public void Awake()
         {
-            SurvivorDict.Add("commando", SurvivorIndex.Commando);
-            SurvivorDict.Add("mult", SurvivorIndex.Toolbot);
-            SurvivorDict.Add("mul-t", SurvivorIndex.Toolbot);
-            SurvivorDict.Add("toolbot", SurvivorIndex.Toolbot);
-            SurvivorDict.Add("hunt", SurvivorIndex.Huntress);
-            SurvivorDict.Add("huntress", SurvivorIndex.Huntress);
-            SurvivorDict.Add("engi", SurvivorIndex.Engi);
-            SurvivorDict.Add("engineer", SurvivorIndex.Engi);
-            SurvivorDict.Add("mage", SurvivorIndex.Mage);
-            SurvivorDict.Add("arti", SurvivorIndex.Mage);
-            SurvivorDict.Add("artificer", SurvivorIndex.Mage);
-            SurvivorDict.Add("merc", SurvivorIndex.Merc);
-            SurvivorDict.Add("mercenary", SurvivorIndex.Merc);
-            SurvivorDict.Add("rex", SurvivorIndex.Treebot);
-            SurvivorDict.Add("treebot", SurvivorIndex.Treebot);
-            SurvivorDict.Add("loader", SurvivorIndex.Loader);
-            SurvivorDict.Add("acrid", SurvivorIndex.Croco);
-            SurvivorDict.Add("croco", SurvivorIndex.Croco);
-            SurvivorDict.Add("capt", SurvivorIndex.Captain);
-            SurvivorDict.Add("captain", SurvivorIndex.Captain);
+            SurvivorDict.Add("commando", SurvivorCatalog.FindSurvivorIndex("Commando"));
+            SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("hunt", SurvivorCatalog.FindSurvivorIndex("Huntress"));
+            SurvivorDict.Add("huntress", SurvivorCatalog.FindSurvivorIndex(".Huntress"));
+            SurvivorDict.Add("engi", SurvivorCatalog.FindSurvivorIndex("Engi"));
+            SurvivorDict.Add("engineer", SurvivorCatalog.FindSurvivorIndex("Engi"));
+            SurvivorDict.Add("mage", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("arti", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("artificer", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("merc", SurvivorCatalog.FindSurvivorIndex("Merc"));
+            SurvivorDict.Add("mercenary", SurvivorCatalog.FindSurvivorIndex("Merc"));
+            SurvivorDict.Add("rex", SurvivorCatalog.FindSurvivorIndex("Treebot"));
+            SurvivorDict.Add("treebot", SurvivorCatalog.FindSurvivorIndex("Treebot"));
+            SurvivorDict.Add("loader", SurvivorCatalog.FindSurvivorIndex("Loader"));
+            SurvivorDict.Add("acrid", SurvivorCatalog.FindSurvivorIndex("Croco"));
+            SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
+            SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
+            SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
@@ -104,7 +111,11 @@ namespace PlayerBots
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
 
             // Add console commands
-            R2API.Utils.CommandHelper.AddToConsoleWhenReady();
+            On.RoR2.Console.Awake += (orig, self) =>
+            {
+                CommandHelper.RegisterCommands(self);
+                orig(self);
+            };
 
             // Apply hooks
             PlayerBotHooks.AddHooks();
@@ -197,8 +208,8 @@ namespace PlayerBots
                     master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
-                    master.inventory.RemoveItem(ItemIndex.CaptainDefenseMatrix, owner.inventory.GetItemCount(ItemIndex.CaptainDefenseMatrix));
-                    master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
+                    master.inventory.RemoveItem(ItemCatalog.FindItemIndex("CaptainDefenseMatrix"), owner.inventory.GetItemCount(ItemCatalog.FindItemIndex("CaptainDefenseMatrix")));
+                    master.inventory.GiveItem(ItemCatalog.FindItemIndex("DrizzlePlayerHelper"), 1);
                     master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
 
                     // Add custom skills
@@ -272,8 +283,8 @@ namespace PlayerBots
 
                     master.GiveMoney(owner.money);
                     master.inventory.CopyItemsFrom(owner.inventory);
-                    master.inventory.RemoveItem(ItemIndex.CaptainDefenseMatrix, owner.inventory.GetItemCount(ItemIndex.CaptainDefenseMatrix));
-                    master.inventory.GiveItem(ItemIndex.DrizzlePlayerHelper, 1);
+                    master.inventory.RemoveItem(ItemCatalog.FindItemIndex("CaptainDefenseMatrix"), owner.inventory.GetItemCount(ItemCatalog.FindItemIndex("CaptainDefenseMatrix")));
+                    master.inventory.GiveItem(ItemCatalog.FindItemIndex("DrizzlePlayerHelper"), 1);
 
                     // Allow the bots to spawn in the next stage
                     master.destroyOnBodyDeath = false;
@@ -305,7 +316,7 @@ namespace PlayerBots
 
         private static void SetRandomSkin(CharacterMaster master, GameObject bodyPrefab)
         {
-            int bodyIndex = bodyPrefab.GetComponent<CharacterBody>().bodyIndex;
+            BodyIndex bodyIndex = bodyPrefab.GetComponent<CharacterBody>().bodyIndex;
             SkinDef[] skins = BodyCatalog.GetBodySkins(bodyIndex);
             master.loadout.bodyLoadoutManager.SetSkinIndex(bodyIndex, (uint)UnityEngine.Random.Range(0, skins.Length));
         }
@@ -517,35 +528,6 @@ namespace PlayerBots
                 {
                     CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                     master.TrueKill();
-                }
-            }
-        }
-
-        [ConCommand(commandName = "freezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Freezes all bots")]
-        private static void CCFreezeBots(ConCommandArgs args)
-        {
-            foreach (GameObject gameObject in playerbots)
-            {
-                if (gameObject)
-                {
-                    BaseAI ai = gameObject.GetComponent<BaseAI>();
-                    ai.enabled = false;
-                    ai.bodyInputBank.moveVector = Vector3.zero;
-                    ai.stateMachine.SetState(new Idle());
-                }
-            }
-        }
-
-        [ConCommand(commandName = "unfreezebots", flags = ConVarFlags.SenderMustBeServer, helpText = "Unfreezes all bots")]
-        private static void CCUnfreezeBots(ConCommandArgs args)
-        {
-            foreach (GameObject gameObject in playerbots)
-            {
-                if (gameObject)
-                {
-                    BaseAI ai = gameObject.GetComponent<BaseAI>();
-                    ai.enabled = true;
-                    ai.stateMachine.SetState(EntityState.Instantiate(ai.scanState));
                 }
             }
         }

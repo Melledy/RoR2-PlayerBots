@@ -81,7 +81,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill1.shouldSprint = true;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 0);
         }
     }
 }

@@ -43,8 +43,12 @@ namespace PlayerBots.AI
                 {
                     if (PlayerBotUtils.TryGetSurvivorIndexByBodyPrefabName(skillHelperSurvivor.BodyPrefabName, out index))
                     {
-                        PlayerBotManager.SurvivorDict.Add(BodyCatalog.FindBodyPrefab(skillHelperSurvivor.BodyPrefabName).GetComponent<CharacterBody>().GetDisplayName().ToLower(), index);
-                        PlayerBotManager.RandomSurvivorsList.Add(index);
+                        string name = BodyCatalog.FindBodyPrefab(skillHelperSurvivor.BodyPrefabName).GetComponent<CharacterBody>().GetDisplayName().ToLower();
+                        if (!PlayerBotManager.SurvivorDict.ContainsKey(name))
+                        {
+                            PlayerBotManager.SurvivorDict.Add(name, index);
+                            PlayerBotManager.RandomSurvivorsList.Add(index);
+                        } 
                     }
                     else
                     {

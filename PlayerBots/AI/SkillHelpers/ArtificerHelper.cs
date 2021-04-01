@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Mage)]
+    [SkillHelperSurvivor("MageBody")]
     class ArtificerHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 20;
-
             // Skills
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill3.customName = "Utility";
@@ -84,7 +81,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.buttonPressType = AISkillDriver.ButtonPressType.Hold;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 20);
         }
     }
 }

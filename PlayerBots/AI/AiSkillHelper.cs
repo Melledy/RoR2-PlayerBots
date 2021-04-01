@@ -30,7 +30,7 @@ namespace PlayerBots.AI
             return skill;
         }
 
-        public void AddDefaultSkills(GameObject gameObject, BaseAI ai)
+        public void AddDefaultSkills(GameObject gameObject, BaseAI ai, float minDistanceFromEnemy)
         {
             AISkillDriver skill;
 
@@ -74,7 +74,7 @@ namespace PlayerBots.AI
             skill.skillSlot = RoR2.SkillSlot.None;
             skill.requireSkillReady = false;
             skill.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-            skill.minDistance = ai.minDistanceFromEnemy;
+            skill.minDistance = minDistanceFromEnemy;
             skill.maxDistance = float.PositiveInfinity;
             skill.selectionRequiresTargetLoS = false;
             skill.activationRequiresTargetLoS = false;

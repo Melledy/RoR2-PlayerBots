@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Croco)]
+    [SkillHelperSurvivor("CrocoBody")]
     class AcridHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 0;
-
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill3.customName = "Utility";
             skill3.skillSlot = RoR2.SkillSlot.Utility;
@@ -99,7 +96,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.shouldSprint = false;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 0);
         }
     }
 }

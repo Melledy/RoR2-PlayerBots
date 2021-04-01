@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor(SurvivorIndex.Commando)]
+    [SkillHelperSurvivor("CommandoBody")]
     class CommandoHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 20;
-
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill3.customName = "Utility";
             skill3.skillSlot = RoR2.SkillSlot.Utility;
@@ -87,7 +84,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 20);
         }
     }
 }

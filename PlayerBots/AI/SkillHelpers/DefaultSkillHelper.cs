@@ -9,9 +9,6 @@ namespace PlayerBots.AI.SkillHelpers
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
-            // Edit
-            ai.minDistanceFromEnemy = 20;
-
             // Skills
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill1.customName = "Shoot";
@@ -31,7 +28,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.shouldSprint = false;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai);
+            AddDefaultSkills(gameObject, ai, 20);
         }
     }
 }

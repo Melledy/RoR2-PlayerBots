@@ -61,6 +61,7 @@ namespace PlayerBots.Custom
 
         private void ProcessEquipment()
         {
+            /*
             if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None || this.master.GetBody().equipmentSlot.stock == 0)
             {
                 return;
@@ -142,6 +143,7 @@ namespace PlayerBots.Custom
                 Debug.Log("Error when bot is using: " + this.master.inventory.currentEquipmentIndex);
                 this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
             }
+            */
         }
 
         private void FireEquipment()
