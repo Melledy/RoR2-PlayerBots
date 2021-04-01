@@ -18,13 +18,8 @@ namespace PlayerBots
         private Run.FixedTimeStamp lastBuyCheck;
         private float buyingDelay;
 
-        private static readonly EquipmentIndex[] usableEquipment = new EquipmentIndex[] {
-            EquipmentCatalog.FindEquipmentIndex("CommandMissile"), EquipmentCatalog.FindEquipmentIndex("BFG"), EquipmentCatalog.FindEquipmentIndex("Lightning"), EquipmentCatalog.FindEquipmentIndex("CritOnUse"),
-            EquipmentCatalog.FindEquipmentIndex("Blackhole"), EquipmentCatalog.FindEquipmentIndex("Fruit"), EquipmentCatalog.FindEquipmentIndex("GainArmor"), EquipmentCatalog.FindEquipmentIndex("Cleanse"),
-            EquipmentCatalog.FindEquipmentIndex("PassiveHealing"), EquipmentCatalog.FindEquipmentIndex("TeamWarCry"), EquipmentCatalog.FindEquipmentIndex("DeathProjectile"), EquipmentCatalog.FindEquipmentIndex("LifestealOnHit")
-        };
-
-        private static readonly List<PickupIndex> equipmentPickups = usableEquipment.Select(e => PickupCatalog.FindPickupIndex(e)).Where(e => e != null).ToList();
+        public static EquipmentIndex[] usableEquipment;
+        public static List<PickupIndex> equipmentPickups;
 
         public void Awake()
         {

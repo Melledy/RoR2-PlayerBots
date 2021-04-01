@@ -61,7 +61,6 @@ namespace PlayerBots.Custom
 
         private void ProcessEquipment()
         {
-            /*
             if (this.master.inventory.currentEquipmentIndex == EquipmentIndex.None || this.master.GetBody().equipmentSlot.stock == 0)
             {
                 return;
@@ -69,72 +68,77 @@ namespace PlayerBots.Custom
 
             try
             {
-                switch (this.master.inventory.currentEquipmentIndex)
+                // TODO Cleanup later
+                EquipmentIndex e = this.master.inventory.currentEquipmentIndex;
+                if (e == IndexManager.CommandMissile || e == IndexManager.Lightning || e == IndexManager.DeathProjectile)
                 {
-                    case EquipmentIndex.CommandMissile:
-                    case EquipmentIndex.Lightning:
-                    case EquipmentIndex.DeathProjectile:
-                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.BFG)
+                {
+                    // Dont spam preon at random mobs
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
+                              (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.CritOnUse)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(IndexManager.BuffFullCrit))
+                    {
+                        if (this.master.GetBody().crit >= 100f)
+                        {
+                            // 100% crit already - no need for this item anymore
+                            this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
+                        }
+                        else
                         {
                             FireEquipment();
                         }
-                        break;
-                    case EquipmentIndex.BFG: // Dont spam preon at random mobs
-                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
-                            (this.ai.currentEnemy.characterBody.isBoss || (this.master.GetBody().equipmentSlot.stock > 1 && this.ai.currentEnemy.characterBody.isElite)))
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    case EquipmentIndex.CritOnUse:
-                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.FullCrit))
-                        {
-                            if (this.master.GetBody().crit >= 100f)
-                            {
-                                // 100% crit already - no need for this item anymore
-                                this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
-                            }
-                            else
-                            {
-                                FireEquipment();
-                            }
-                        }
-                        break;
-                    case EquipmentIndex.TeamWarCry:
-                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(BuffIndex.TeamWarCry))
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    case EquipmentIndex.Blackhole:
-                        if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    case EquipmentIndex.LifestealOnHit:
-                    case EquipmentIndex.PassiveHealing:
-                    case EquipmentIndex.Fruit:
-                        if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(BuffIndex.HealingDisabled))
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    case EquipmentIndex.GainArmor:
-                        if (this.master.GetBody().healthComponent.combinedHealthFraction <= .35 && this.master.GetBody().healthComponent.timeSinceLastHit <= 1.0f)
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    case EquipmentIndex.Cleanse:
-                        if (this.HasBuff(BuffIndex.OnFire) || this.HasBuff(BuffIndex.HealingDisabled))
-                        {
-                            FireEquipment();
-                        }
-                        break;
-                    default:
-                        this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
-                        break;
+                    }
+                }
+                else if (e == IndexManager.TeamWarCry)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(IndexManager.BuffTeamWarCry))
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.Blackhole)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.LifestealOnHit || e == IndexManager.PassiveHealing || e == IndexManager.Fruit)
+                {
+                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(IndexManager.BuffHealingDisabled))
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.GainArmor)
+                {
+                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .35 && this.master.GetBody().healthComponent.timeSinceLastHit <= 1.0f)
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == IndexManager.Cleanse)
+                {
+                    if (this.HasBuff(IndexManager.BuffOnFire) || this.HasBuff(IndexManager.BuffHealingDisabled))
+                    {
+                        FireEquipment();
+                    }
+                }
+                else 
+                {
+                    this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
                 }
             }
             catch (System.Exception e)
@@ -143,7 +147,6 @@ namespace PlayerBots.Custom
                 Debug.Log("Error when bot is using: " + this.master.inventory.currentEquipmentIndex);
                 this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
             }
-            */
         }
 
         private void FireEquipment()
