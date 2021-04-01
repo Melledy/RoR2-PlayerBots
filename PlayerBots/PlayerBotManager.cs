@@ -66,6 +66,7 @@ namespace PlayerBots
             SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
             SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
             SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
+            SurvivorDict.Add("bandit", SurvivorCatalog.FindSurvivorIndex("Bandit"));
 
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
