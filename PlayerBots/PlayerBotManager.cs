@@ -85,7 +85,6 @@ namespace PlayerBots
         public void Start()
         {
             // Set survivor dict
-            SurvivorDict.Add("commando", SurvivorCatalog.FindSurvivorIndex("Commando"));
             SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
@@ -100,12 +99,8 @@ namespace PlayerBots
             SurvivorDict.Add("mercenary", SurvivorCatalog.FindSurvivorIndex("Merc"));
             SurvivorDict.Add("rex", SurvivorCatalog.FindSurvivorIndex("Treebot"));
             SurvivorDict.Add("treebot", SurvivorCatalog.FindSurvivorIndex("Treebot"));
-            SurvivorDict.Add("loader", SurvivorCatalog.FindSurvivorIndex("Loader"));
-            SurvivorDict.Add("acrid", SurvivorCatalog.FindSurvivorIndex("Croco"));
             SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
             SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
-            SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
-            SurvivorDict.Add("bandit", SurvivorCatalog.FindSurvivorIndex("Bandit"));
 
             // Add skill helpers
             AiSkillHelperCatalog.Populate();
