@@ -243,8 +243,16 @@ namespace PlayerBots
                 return;
             }
 
-            // Get card
-            SpawnCard card = (SpawnCard)Resources.Load("SpawnCards/CharacterSpawnCards/cscBeetleGuardAlly");
+            // Card
+            PlayerBotSpawnCard card = ScriptableObject.CreateInstance<PlayerBotSpawnCard>();
+            card.hullSize = HullClassification.Human;
+            card.nodeGraphType = MapNodeGroup.GraphType.Ground;
+            card.occupyPosition = false;
+            card.sendOverNetwork = true;
+            card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
+            card.prefab = Resources.Load<GameObject>("prefabs/charactermasters/CommandoMonsterMaster");
+            card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
+            card.bodyPrefab = bodyPrefab;
 
             // Spawn request
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
@@ -271,10 +279,8 @@ namespace PlayerBots
                 if (master)
                 {
                     master.name = "PlayerBot";
-                    master.bodyPrefab = bodyPrefab;
                     SetRandomSkin(master, bodyPrefab);
 
-                    master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
                     master.teamIndex = TeamIndex.Player;
 
                     GiveStartingItems(owner, master);
