@@ -46,28 +46,6 @@ namespace PlayerBots
 
         public void Awake()
         {
-            SurvivorDict.Add("commando", SurvivorCatalog.FindSurvivorIndex("Commando"));
-            SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
-            SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
-            SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
-            SurvivorDict.Add("hunt", SurvivorCatalog.FindSurvivorIndex("Huntress"));
-            SurvivorDict.Add("huntress", SurvivorCatalog.FindSurvivorIndex(".Huntress"));
-            SurvivorDict.Add("engi", SurvivorCatalog.FindSurvivorIndex("Engi"));
-            SurvivorDict.Add("engineer", SurvivorCatalog.FindSurvivorIndex("Engi"));
-            SurvivorDict.Add("mage", SurvivorCatalog.FindSurvivorIndex("Mage"));
-            SurvivorDict.Add("arti", SurvivorCatalog.FindSurvivorIndex("Mage"));
-            SurvivorDict.Add("artificer", SurvivorCatalog.FindSurvivorIndex("Mage"));
-            SurvivorDict.Add("merc", SurvivorCatalog.FindSurvivorIndex("Merc"));
-            SurvivorDict.Add("mercenary", SurvivorCatalog.FindSurvivorIndex("Merc"));
-            SurvivorDict.Add("rex", SurvivorCatalog.FindSurvivorIndex("Treebot"));
-            SurvivorDict.Add("treebot", SurvivorCatalog.FindSurvivorIndex("Treebot"));
-            SurvivorDict.Add("loader", SurvivorCatalog.FindSurvivorIndex("Loader"));
-            SurvivorDict.Add("acrid", SurvivorCatalog.FindSurvivorIndex("Croco"));
-            SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
-            SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
-            SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
-            SurvivorDict.Add("bandit", SurvivorCatalog.FindSurvivorIndex("Bandit"));
-
             // Config
             InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
 
@@ -106,6 +84,30 @@ namespace PlayerBots
 
         public void Start()
         {
+            // Set survivor dict
+            SurvivorDict.Add("commando", SurvivorCatalog.FindSurvivorIndex("Commando"));
+            SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
+            SurvivorDict.Add("hunt", SurvivorCatalog.FindSurvivorIndex("Huntress"));
+            SurvivorDict.Add("huntress", SurvivorCatalog.FindSurvivorIndex(".Huntress"));
+            SurvivorDict.Add("engi", SurvivorCatalog.FindSurvivorIndex("Engi"));
+            SurvivorDict.Add("engineer", SurvivorCatalog.FindSurvivorIndex("Engi"));
+            SurvivorDict.Add("mage", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("arti", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("artificer", SurvivorCatalog.FindSurvivorIndex("Mage"));
+            SurvivorDict.Add("merc", SurvivorCatalog.FindSurvivorIndex("Merc"));
+            SurvivorDict.Add("mercenary", SurvivorCatalog.FindSurvivorIndex("Merc"));
+            SurvivorDict.Add("rex", SurvivorCatalog.FindSurvivorIndex("Treebot"));
+            SurvivorDict.Add("treebot", SurvivorCatalog.FindSurvivorIndex("Treebot"));
+            SurvivorDict.Add("loader", SurvivorCatalog.FindSurvivorIndex("Loader"));
+            SurvivorDict.Add("acrid", SurvivorCatalog.FindSurvivorIndex("Croco"));
+            SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
+            SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
+            SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
+            SurvivorDict.Add("bandit", SurvivorCatalog.FindSurvivorIndex("Bandit"));
+
+            // Add skill helpers
             AiSkillHelperCatalog.Populate();
 
             // Config
