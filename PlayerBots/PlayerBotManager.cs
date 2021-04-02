@@ -204,11 +204,9 @@ namespace PlayerBots
 
                     // Set commponent values
                     master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
-                    master.GiveMoney(owner.money);
-                    master.inventory.CopyItemsFrom(owner.inventory);
-                    master.inventory.RemoveItem(ItemCatalog.FindItemIndex("CaptainDefenseMatrix"), owner.inventory.GetItemCount(ItemCatalog.FindItemIndex("CaptainDefenseMatrix")));
-                    master.inventory.GiveItem(ItemCatalog.FindItemIndex("DrizzlePlayerHelper"), 1);
                     master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
+
+                    GiveStartingItems(owner, master);
 
                     // Add custom skills
                     InjectSkillDrivers(gameObject, ai, survivorIndex);
@@ -279,10 +277,7 @@ namespace PlayerBots
                     master.Respawn(master.GetBody().transform.position, master.GetBody().transform.rotation);
                     master.teamIndex = TeamIndex.Player;
 
-                    master.GiveMoney(owner.money);
-                    master.inventory.CopyItemsFrom(owner.inventory);
-                    master.inventory.RemoveItem(ItemCatalog.FindItemIndex("CaptainDefenseMatrix"), owner.inventory.GetItemCount(ItemCatalog.FindItemIndex("CaptainDefenseMatrix")));
-                    master.inventory.GiveItem(ItemCatalog.FindItemIndex("DrizzlePlayerHelper"), 1);
+                    GiveStartingItems(owner, master);
 
                     // Allow the bots to spawn in the next stage
                     master.destroyOnBodyDeath = false;
@@ -310,6 +305,14 @@ namespace PlayerBots
                 // Add to playerbot list
                 playerbots.Add(gameObject);
             }
+        }
+
+        private static void GiveStartingItems(CharacterMaster owner, CharacterMaster master)
+        {
+            master.GiveMoney(owner.money);
+            master.inventory.CopyItemsFrom(owner.inventory);
+            master.inventory.RemoveItem(ItemCatalog.FindItemIndex("CaptainDefenseMatrix"), owner.inventory.GetItemCount(ItemCatalog.FindItemIndex("CaptainDefenseMatrix")));
+            master.inventory.GiveItem(ItemCatalog.FindItemIndex("DrizzlePlayerHelper"), 1);
         }
 
         private static void SetRandomSkin(CharacterMaster master, GameObject bodyPrefab)
