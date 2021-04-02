@@ -48,7 +48,10 @@ namespace PlayerBots.AI
                         {
                             PlayerBotManager.SurvivorDict.Add(name, index);
                         }
-                        PlayerBotManager.RandomSurvivorsList.Add(index);
+                        if (skillHelperSurvivor.AllowRandom)
+                        {
+                            PlayerBotManager.RandomSurvivorsList.Add(index);
+                        } 
                     }
                     else
                     {
