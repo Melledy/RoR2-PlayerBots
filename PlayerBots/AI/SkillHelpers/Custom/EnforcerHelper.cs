@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor("EnforcerBody")]
-    [CustomSurvivor("https://thunderstore.io/package/EnforcerGang/Enforcer/", "1.0.4")]
+    [SkillHelperSurvivor("Prefabs/CharacterBodies/RoR1EnforcerBody")]
+    [CustomSurvivor("https://thunderstore.io/package/LuaFubuki/BackupSquad/", "0.0.3")]
     class EnforcerHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)

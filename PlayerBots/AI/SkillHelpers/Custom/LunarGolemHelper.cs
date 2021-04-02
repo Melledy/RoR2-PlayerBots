@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor("CommandoBody")]
-    class CommandoHelper : AiSkillHelper
+    [SkillHelperSurvivor("Lunar Golem Survivor")]
+    [CustomSurvivor("https://thunderstore.io/package/LuaFubuki/Lunar_Golem/", "0.0.8")]
+    class LunarGolemHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -27,7 +28,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill3_chase.shouldSprint = true;
 
             AISkillDriver skill3 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill3.customName = "UtilityDefensive";
+            skill3.customName = "Utility";
             skill3.skillSlot = RoR2.SkillSlot.Utility;
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
@@ -51,7 +52,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.requireSkillReady = true;
             skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill4.minDistance = 0;
-            skill4.maxDistance = 35;
+            skill4.maxDistance = 50;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
@@ -59,7 +60,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
+            skill4.noRepeat = true;
             skill4.shouldSprint = false;
             skill4.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
@@ -69,11 +70,11 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 40;
+            skill2.maxDistance = 20;
             skill2.selectionRequiresTargetLoS = true;
-            skill2.activationRequiresTargetLoS = true;
-            skill2.activationRequiresAimConfirmation = true;
-            skill2.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill2.activationRequiresTargetLoS = false;
+            skill2.activationRequiresAimConfirmation = false;
+            skill2.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
             skill2.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill2.ignoreNodeGraph = false;
             skill2.resetCurrentEnemyOnNextDriverSelection = false;
@@ -81,7 +82,24 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.shouldSprint = false;
             skill2.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
-            // Skills
+            AISkillDriver skill1_alt = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
+            skill1_alt.customName = "Shoot";
+            skill1_alt.skillSlot = RoR2.SkillSlot.Primary;
+            skill1_alt.requireSkillReady = true;
+            skill1_alt.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
+            skill1_alt.minDistance = 0;
+            skill1_alt.maxDistance = 20;
+            skill1_alt.selectionRequiresTargetLoS = true;
+            skill1_alt.activationRequiresTargetLoS = true;
+            skill1_alt.activationRequiresAimConfirmation = true;
+            skill1_alt.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill1_alt.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill1_alt.ignoreNodeGraph = false;
+            skill1_alt.resetCurrentEnemyOnNextDriverSelection = false;
+            skill1_alt.noRepeat = false;
+            skill1_alt.shouldSprint = false;
+            skill1_alt.buttonPressType = AISkillDriver.ButtonPressType.Hold;
+
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill1.customName = "Shoot";
             skill1.skillSlot = RoR2.SkillSlot.Primary;
@@ -100,8 +118,10 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.shouldSprint = false;
             skill1.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
+            skill4.nextHighPriorityOverride = skill1;
+
             // Add default skills
-            AddDefaultSkills(gameObject, ai, 20);
+            AddDefaultSkills(gameObject, ai, 10);
         }
     }
 }

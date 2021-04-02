@@ -1,11 +1,12 @@
-﻿using RoR2.CharacterAI;
+﻿using RoR2;
+using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace PlayerBots.AI.SkillHelpers.Custom
+namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor("HybridBody")]
-    [CustomSurvivor("https://thunderstore.io/package/RavensQueen/TheHybrid/", "6.5.0")]
-    class TheHybridHelper : AiSkillHelper
+    [SkillHelperSurvivor("TeemoBody")]
+    [CustomSurvivor("https://thunderstore.io/package/Dragonyck/Teemo/", "1.1.0")]
+    class TeemoHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -15,10 +16,9 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
-            skill3.maxDistance = 60;
-            skill3.maxUserHealthFraction = .25f;
-            skill3.selectionRequiresTargetLoS = false;
-            skill3.activationRequiresTargetLoS = false;
+            skill3.maxDistance = 40;
+            skill3.selectionRequiresTargetLoS = true;
+            skill3.activationRequiresTargetLoS = true;
             skill3.activationRequiresAimConfirmation = false;
             skill3.movementType = AISkillDriver.MovementType.FleeMoveTarget;
             skill3.aimType = AISkillDriver.AimType.MoveDirection;
@@ -27,30 +27,13 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill3.noRepeat = false;
             skill3.shouldSprint = true;
 
-            AISkillDriver skill4 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill4.customName = "Special";
-            skill4.skillSlot = RoR2.SkillSlot.Special;
-            skill4.requireSkillReady = true;
-            skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-            skill4.minDistance = 0;
-            skill4.maxDistance = 60;
-            skill4.selectionRequiresTargetLoS = true;
-            skill4.activationRequiresTargetLoS = true;
-            skill4.activationRequiresAimConfirmation = true;
-            skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
-            skill4.ignoreNodeGraph = false;
-            skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
-            skill4.shouldSprint = false;
-
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill2.customName = "Secondary";
             skill2.skillSlot = RoR2.SkillSlot.Secondary;
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 60;
+            skill2.maxDistance = 50;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
@@ -61,9 +44,27 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill2.noRepeat = false;
             skill2.shouldSprint = false;
 
+            AISkillDriver skill4 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
+            skill4.customName = "Special";
+            skill4.skillSlot = RoR2.SkillSlot.Special;
+            skill4.requireSkillReady = true;
+            skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
+            skill4.minDistance = 0;
+            skill4.maxDistance = 40;
+            skill4.selectionRequiresTargetLoS = true;
+            skill4.activationRequiresTargetLoS = true;
+            skill4.activationRequiresAimConfirmation = true;
+            skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill4.ignoreNodeGraph = false;
+            skill4.resetCurrentEnemyOnNextDriverSelection = false;
+            skill4.noRepeat = true;
+            skill4.shouldSprint = false;
+            skill4.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
+
             // Skills
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill1.customName = "Shoot";
+            skill1.customName = "Primary";
             skill1.skillSlot = RoR2.SkillSlot.Primary;
             skill1.requireSkillReady = true;
             skill1.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;

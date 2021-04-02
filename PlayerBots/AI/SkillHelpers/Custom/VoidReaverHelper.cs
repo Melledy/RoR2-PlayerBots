@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
     [SkillHelperSurvivor("Void Reaver Survivor")]
-    [CustomSurvivor("https://thunderstore.io/package/LuaFubuki/Void_Reaver/", "0.3.6")]
+    [CustomSurvivor("https://thunderstore.io/package/LuaFubuki/Void_Reaver/", "0.5.1")]
     class VoidReaverHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
@@ -81,7 +81,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill1.shouldSprint = false;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai, 15);
+            AddDefaultSkills(gameObject, ai, 10);
         }
     }
 }
