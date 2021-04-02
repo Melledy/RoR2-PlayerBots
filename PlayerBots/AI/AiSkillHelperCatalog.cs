@@ -84,12 +84,21 @@ namespace PlayerBots.AI
         public SkillHelperSurvivor(SurvivorIndex index)
         {
             Index = index;
+            AllowRandom = true;
         }
 
         public SkillHelperSurvivor(String bodyPrefabName)
         {
             Index = SurvivorIndex.None;
             BodyPrefabName = bodyPrefabName;
+            AllowRandom = true;
+        }
+
+        public SkillHelperSurvivor(String bodyPrefabName, bool allowRandom)
+        {
+            Index = SurvivorIndex.None;
+            BodyPrefabName = bodyPrefabName;
+            AllowRandom = allowRandom;
         }
 
         public SurvivorIndex Index
@@ -99,6 +108,12 @@ namespace PlayerBots.AI
         }
 
         public string BodyPrefabName
+        {
+            get;
+            private set;
+        }
+
+        public bool AllowRandom
         {
             get;
             private set;
