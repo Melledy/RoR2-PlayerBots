@@ -16,6 +16,8 @@ namespace PlayerBots
             {
                 if (self.name.Equals("PlayerBot"))
                 {
+                    // Reset player bot state when body is lost so errors dont pop up
+                    self.stateMachine.SetNextState(EntityStateCatalog.InstantiateState(self.scanState));
                     return;
                 }
                 orig(self, body);
