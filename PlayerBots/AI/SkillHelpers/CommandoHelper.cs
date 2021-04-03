@@ -15,7 +15,7 @@ namespace PlayerBots.AI.SkillHelpers
             skill3_chase.requireSkillReady = true;
             skill3_chase.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3_chase.minDistance = 50;
-            skill3_chase.maxDistance = 120;
+            skill3_chase.maxDistance = 100;
             skill3_chase.selectionRequiresTargetLoS = true;
             skill3_chase.activationRequiresTargetLoS = true;
             skill3_chase.activationRequiresAimConfirmation = false;

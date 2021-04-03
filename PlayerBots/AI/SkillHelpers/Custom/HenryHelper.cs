@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace PlayerBots.AI.SkillHelpers
 {
-    [SkillHelperSurvivor("TracerBody")]
-    [CustomSurvivor("https://thunderstore.io/package/Dragonyck/Tracer/", "1.2.1")]
-    class TracerHelper : AiSkillHelper
+    [SkillHelperSurvivor("HenryBody")]
+    [CustomSurvivor("https://thunderstore.io/package/rob/HenryMod/", "1.2.4")]
+    class HenryHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
         {
@@ -15,13 +15,14 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.skillSlot = RoR2.SkillSlot.Utility;
             skill3.requireSkillReady = true;
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
-            skill3.minDistance = 40;
-            skill3.maxDistance = 100;
+            skill3.minDistance = 10;
+            skill3.maxDistance = 50;
+            //skill3.maxUserHealthFraction = .25f;
             skill3.selectionRequiresTargetLoS = true;
             skill3.activationRequiresTargetLoS = true;
-            skill3.activationRequiresAimConfirmation = true;
+            skill3.activationRequiresAimConfirmation = false;
             skill3.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
-            skill3.aimType = AISkillDriver.AimType.MoveDirection;
+            skill3.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill3.ignoreNodeGraph = false;
             skill3.resetCurrentEnemyOnNextDriverSelection = false;
             skill3.noRepeat = false;
@@ -33,18 +34,16 @@ namespace PlayerBots.AI.SkillHelpers
             skill4.requireSkillReady = true;
             skill4.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill4.minDistance = 0;
-            skill4.maxDistance = 30;
-            skill4.maxUserHealthFraction = .75f;
+            skill4.maxDistance = 50;
             skill4.selectionRequiresTargetLoS = true;
             skill4.activationRequiresTargetLoS = true;
             skill4.activationRequiresAimConfirmation = true;
-            skill4.movementType = AISkillDriver.MovementType.FleeMoveTarget;
-            skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill4.movementType = AISkillDriver.MovementType.StrafeMovetarget;
+            skill4.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = true;
+            skill4.noRepeat = false;
             skill4.shouldSprint = false;
-            skill4.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             AISkillDriver skill2 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill2.customName = "Secondary";
@@ -52,16 +51,33 @@ namespace PlayerBots.AI.SkillHelpers
             skill2.requireSkillReady = true;
             skill2.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill2.minDistance = 0;
-            skill2.maxDistance = 30;
+            skill2.maxDistance = 40;
             skill2.selectionRequiresTargetLoS = true;
             skill2.activationRequiresTargetLoS = true;
             skill2.activationRequiresAimConfirmation = true;
             skill2.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill2.aimType = AISkillDriver.AimType.AtCurrentEnemy;
+            skill2.aimType = AISkillDriver.AimType.AtMoveTarget;
             skill2.ignoreNodeGraph = false;
             skill2.resetCurrentEnemyOnNextDriverSelection = false;
             skill2.noRepeat = false;
             skill2.shouldSprint = false;
+
+            AISkillDriver chaseSkill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
+            chaseSkill.customName = "ChaseTarget";
+            chaseSkill.skillSlot = RoR2.SkillSlot.None;
+            chaseSkill.requireSkillReady = false;
+            chaseSkill.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
+            chaseSkill.minDistance = 10;
+            chaseSkill.maxDistance = 60;
+            chaseSkill.selectionRequiresTargetLoS = true;
+            chaseSkill.activationRequiresTargetLoS = true;
+            chaseSkill.activationRequiresAimConfirmation = false;
+            chaseSkill.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
+            chaseSkill.aimType = AISkillDriver.AimType.AtMoveTarget;
+            chaseSkill.ignoreNodeGraph = false;
+            chaseSkill.resetCurrentEnemyOnNextDriverSelection = false;
+            chaseSkill.noRepeat = false;
+            chaseSkill.shouldSprint = true;
 
             // Skills
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
@@ -70,19 +86,19 @@ namespace PlayerBots.AI.SkillHelpers
             skill1.requireSkillReady = true;
             skill1.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill1.minDistance = 0;
-            skill1.maxDistance = 60;
+            skill1.maxDistance = 10;
             skill1.selectionRequiresTargetLoS = true;
             skill1.activationRequiresTargetLoS = true;
-            skill1.activationRequiresAimConfirmation = true;
-            skill1.movementType = AISkillDriver.MovementType.StrafeMovetarget;
-            skill1.aimType = AISkillDriver.AimType.AtCurrentEnemy;
-            skill1.ignoreNodeGraph = false;
+            skill1.activationRequiresAimConfirmation = false;
+            skill1.movementType = AISkillDriver.MovementType.ChaseMoveTarget;
+            skill1.aimType = AISkillDriver.AimType.AtMoveTarget;
+            skill1.ignoreNodeGraph = true;
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;
             skill1.shouldSprint = false;
 
             // Add default skills
-            AddDefaultSkills(gameObject, ai, 15);
+            AddDefaultSkills(gameObject, ai, 0);
         }
     }
 }
