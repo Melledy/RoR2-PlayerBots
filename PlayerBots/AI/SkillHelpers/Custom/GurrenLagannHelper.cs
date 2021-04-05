@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers
 {
     [SkillHelperSurvivor("GurrenLagannBody")]
-    [CustomSurvivor("https://thunderstore.io/package/Mico27/TTGL_Mod/", "0.1.6")]
+    [CustomSurvivor("https://thunderstore.io/package/Mico27/TTGL_Mod/", "0.1.8")]
     class GurrenLagannHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers
 {
     [SkillHelperSurvivor("RobPaladinBody")]
-    [CustomSurvivor("https://thunderstore.io/package/rob/PaladinMod/", "1.4.3")]
+    [CustomSurvivor("https://thunderstore.io/package/rob/PaladinMod/", "1.4.6")]
     class PaladinHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
