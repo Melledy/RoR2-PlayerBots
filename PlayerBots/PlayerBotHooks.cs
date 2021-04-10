@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using static On.RoR2.CharacterAI.BaseAI.Target;
 
 namespace PlayerBots
 {
@@ -150,6 +151,9 @@ namespace PlayerBots
                 }
             };
 
+            // Fix custom targets
+            On.RoR2.CharacterAI.BaseAI.Target.GetBullseyePosition += Hook_GetBullseyePosition;
+
             if (PlayerBotManager.PlayerMode.Value)
             {
                 On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
@@ -215,7 +219,32 @@ namespace PlayerBots
                     c.Index += 2;
                     c.EmitDelegate<Func<bool, bool>>(x => false);
                 };
+
+                // Spectator fix
+                On.RoR2.CameraRigController.CanUserSpectateBody += (orig, viewer, body) =>
+                {
+                    return body.isPlayerControlled || orig(viewer, body);
+                };
+
+                // Dont end game on dying
+                if (PlayerBotManager.ContinueAfterDeath.Value)
+                {
+                    IL.RoR2.Stage.FixedUpdate += il =>
+                    {
+                        ILCursor c = new ILCursor(il);
+                        c.GotoNext(x => x.MatchCallvirt<PlayerCharacterMasterController>("get_isConnected"));
+                        c.Index += 1;
+                        c.EmitDelegate<Func<bool, bool>>(x => true);
+                    };
+                }
             }
         }
+
+        public static bool Hook_GetBullseyePosition(orig_GetBullseyePosition orig, global::RoR2.CharacterAI.BaseAI.Target self, out Vector3 position)
+        {
+            orig(self, out position);
+            return true;
+        }
+
     }
 }

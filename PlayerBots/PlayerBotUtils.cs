@@ -18,5 +18,10 @@ namespace PlayerBots
             index = def.survivorIndex;
             return true;
         }
+
+        public static float GetFastDist(Vector3 pos1, Vector3 pos2)
+        {
+            return (pos1 - pos2).sqrMagnitude;
+        }
     }
 }

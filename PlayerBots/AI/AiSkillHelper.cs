@@ -6,15 +6,16 @@ namespace PlayerBots.AI
     abstract class AiSkillHelper
     {
         public abstract void InjectSkills(GameObject gameObject, BaseAI ai);
-
-        public AISkillDriver AddCustomTargetLeash(GameObject gameObject, BaseAI ai)
+        public void AddDefaultSkills(GameObject gameObject, BaseAI ai, float minDistanceFromEnemy)
         {
-            AISkillDriver skill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
+            AISkillDriver skill;
+
+            skill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
             skill.customName = "CustomTargetLeash";
             skill.skillSlot = RoR2.SkillSlot.None;
             skill.requireSkillReady = false;
             skill.moveTargetType = AISkillDriver.TargetType.Custom;
-            skill.minDistance = 100;
+            skill.minDistance = 0;
             skill.maxDistance = float.PositiveInfinity;
             skill.selectionRequiresTargetLoS = false;
             skill.activationRequiresTargetLoS = false;
@@ -24,30 +25,6 @@ namespace PlayerBots.AI
             skill.ignoreNodeGraph = false;
             skill.resetCurrentEnemyOnNextDriverSelection = true;
             skill.driverUpdateTimerOverride = 3;
-            skill.noRepeat = false;
-            skill.shouldSprint = true;
-
-            return skill;
-        }
-
-        public void AddDefaultSkills(GameObject gameObject, BaseAI ai, float minDistanceFromEnemy)
-        {
-            AISkillDriver skill;
-
-            skill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
-            skill.customName = "WaitNearCustomTarget";
-            skill.skillSlot = RoR2.SkillSlot.None;
-            skill.requireSkillReady = false;
-            skill.moveTargetType = AISkillDriver.TargetType.Custom;
-            skill.minDistance = 0;
-            skill.maxDistance = float.PositiveInfinity;
-            skill.selectionRequiresTargetLoS = false;
-            skill.activationRequiresTargetLoS = false;
-            skill.activationRequiresAimConfirmation = false;
-            skill.movementType = AISkillDriver.MovementType.Stop;
-            skill.aimType = AISkillDriver.AimType.AtMoveTarget;
-            skill.ignoreNodeGraph = false;
-            skill.resetCurrentEnemyOnNextDriverSelection = false;
             skill.noRepeat = false;
             skill.shouldSprint = true;
 

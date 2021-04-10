@@ -7,6 +7,7 @@ using RoR2.CharacterAI;
 using RoR2.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -26,6 +27,7 @@ namespace PlayerBots
         // Config options
         public static ConfigWrapper<int> InitialRandomBots { get; set; }
         public static ConfigWrapper<int>[] InitialBots;
+        public static bool allRealPlayersDead;
 
         public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
         public static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
@@ -43,6 +45,8 @@ namespace PlayerBots
         public static ConfigWrapper<bool> ShowNameplates { get; set; }
         public static ConfigWrapper<bool> PlayerMode { get; set; }
         public static ConfigWrapper<bool> DontScaleInteractables { get; set; }
+        public static ConfigWrapper<bool> BotsUseInteractables { get; set; }
+        public static ConfigWrapper<bool> ContinueAfterDeath { get; set; }
 
         public void Awake()
         {
@@ -67,6 +71,8 @@ namespace PlayerBots
 
             PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
             DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
+            BotsUseInteractables = Config.Wrap("Player Mode", "BotsUseInteractables", "[Experimental] Allow bots to use interactables. Only active is PlayerMode is true.", false);
+            ContinueAfterDeath = Config.Wrap("Player Mode", "ContinueAfterDeath", "Continues the game even after all real players have died. Only active is PlayerMode is true.", false);
 
             // Sanity check
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
@@ -228,7 +234,6 @@ namespace PlayerBots
             Destroy(card);
         }
 
-        // A hacky method. Don't ask questions.
         private static void SpawnPlayerbotAsSummon(CharacterMaster owner, SurvivorIndex survivorIndex)
         {
             SurvivorDef def = SurvivorCatalog.GetSurvivorDef(survivorIndex);
@@ -339,7 +344,7 @@ namespace PlayerBots
 
             // Add skill drivers based on class
             AiSkillHelper skillHelper = AiSkillHelperCatalog.GetSkillHelperByIndex(survivorIndex);
-            skillHelper.AddCustomTargetLeash(gameObject, ai);
+            //skillHelper.AddCustomTargetLeash(gameObject, ai);
             skillHelper.InjectSkills(gameObject, ai);
 
             // Set skill drivers
@@ -383,6 +388,11 @@ namespace PlayerBots
             {
                 DestroyImmediate(skill);
             }
+        }
+
+        public void FixedUpdate()
+        {
+            allRealPlayersDead = !PlayerCharacterMasterController.instances.Any(p => p.preventGameOver && p.isConnected);
         }
 
         [ConCommand(commandName = "addbot", flags = ConVarFlags.ExecuteOnServer, helpText = "Adds a playerbot. Usage: addbot [character index] [amount] [network user index]")]
