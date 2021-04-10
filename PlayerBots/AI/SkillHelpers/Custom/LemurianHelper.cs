@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
     [SkillHelperSurvivor("LEMURIAN_NAME")]
-    [CustomSurvivor("https://thunderstore.io/package/Tymmey/Lemurian/", "6.1.2")]
+    [CustomSurvivor("https://thunderstore.io/package/Tymmey/Lemurian/", "7.1.0")]
     class LemurianHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
