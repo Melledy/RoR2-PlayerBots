@@ -25,54 +25,54 @@ namespace PlayerBots
         public static Dictionary<string, SurvivorIndex> SurvivorDict = new Dictionary<string, SurvivorIndex>();
 
         // Config options
-        public static ConfigWrapper<int> InitialRandomBots { get; set; }
-        public static ConfigWrapper<int>[] InitialBots;
+        public static ConfigEntry<int> InitialRandomBots { get; set; }
+        public static ConfigEntry<int>[] InitialBots;
         public static bool allRealPlayersDead;
 
-        public static ConfigWrapper<int> MaxBotPurchasesPerStage { get; set; }
-        public static ConfigWrapper<bool> AutoPurchaseItems { get; set; }
-        public static ConfigWrapper<float> Tier1ChestBotWeight { get; set; }
-        public static ConfigWrapper<int> Tier1ChestBotCost { get; set; }
-        public static ConfigWrapper<float> Tier2ChestBotWeight { get; set; }
-        public static ConfigWrapper<int> Tier2ChestBotCost { get; set; }
-        public static ConfigWrapper<float> Tier3ChestBotWeight { get; set; }
-        public static ConfigWrapper<int> Tier3ChestBotCost { get; set; }
-        public static ConfigWrapper<int> EquipmentBuyChance { get; set; }
-        public static ConfigWrapper<float> MinBuyingDelay { get; set; }
-        public static ConfigWrapper<float> MaxBuyingDelay { get; set; }
-        public static ConfigWrapper<bool> ShowBuyMessages { get; set; }
-        public static ConfigWrapper<bool> HostOnlySpawnBots { get; set; }
-        public static ConfigWrapper<bool> ShowNameplates { get; set; }
-        public static ConfigWrapper<bool> PlayerMode { get; set; }
-        public static ConfigWrapper<bool> DontScaleInteractables { get; set; }
-        public static ConfigWrapper<bool> BotsUseInteractables { get; set; }
-        public static ConfigWrapper<bool> ContinueAfterDeath { get; set; }
+        public static ConfigEntry<int> MaxBotPurchasesPerStage { get; set; }
+        public static ConfigEntry<bool> AutoPurchaseItems { get; set; }
+        public static ConfigEntry<float> Tier1ChestBotWeight { get; set; }
+        public static ConfigEntry<int> Tier1ChestBotCost { get; set; }
+        public static ConfigEntry<float> Tier2ChestBotWeight { get; set; }
+        public static ConfigEntry<int> Tier2ChestBotCost { get; set; }
+        public static ConfigEntry<float> Tier3ChestBotWeight { get; set; }
+        public static ConfigEntry<int> Tier3ChestBotCost { get; set; }
+        public static ConfigEntry<int> EquipmentBuyChance { get; set; }
+        public static ConfigEntry<float> MinBuyingDelay { get; set; }
+        public static ConfigEntry<float> MaxBuyingDelay { get; set; }
+        public static ConfigEntry<bool> ShowBuyMessages { get; set; }
+        public static ConfigEntry<bool> HostOnlySpawnBots { get; set; }
+        public static ConfigEntry<bool> ShowNameplates { get; set; }
+        public static ConfigEntry<bool> PlayerMode { get; set; }
+        public static ConfigEntry<bool> DontScaleInteractables { get; set; }
+        public static ConfigEntry<bool> BotsUseInteractables { get; set; }
+        public static ConfigEntry<bool> ContinueAfterDeath { get; set; }
 
         public void Awake()
         {
             // Config
-            InitialRandomBots = Config.Wrap("Starting Bots", "StartingBots.Random", "Starting amount of bots to spawn at the start of a run. (Random)", 0);
+            InitialRandomBots = Config.Bind("Starting Bots", "StartingBots.Random", 0, "Starting amount of bots to spawn at the start of a run. (Random)");
 
-            AutoPurchaseItems = Config.Wrap("Bot Inventory", "AutoPurchaseItems", "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.", true);
-            MaxBotPurchasesPerStage = Config.Wrap("Bot Inventory", "MaxBotPurchasesPerStage", "Maximum amount of putchases a playerbot can do per stage.", 10);
-            Tier1ChestBotWeight = Config.Wrap("Bot Inventory", "Tier1ChestBotWeight", "Weight of a bot picking an item from a small chest's loot table.", 0.8f);
-            Tier2ChestBotWeight = Config.Wrap("Bot Inventory", "Tier2ChestBotWeight", "Weight of a bot picking an item from a large chest's loot table.", 0.2f);
-            Tier3ChestBotWeight = Config.Wrap("Bot Inventory", "Tier3ChestBotWeight", "Weight of a bot picking an item from a legendary chest's loot table.", 0f);
-            Tier1ChestBotCost = Config.Wrap("Bot Inventory", "Tier1ChestBotCost", "Base price of a small chest for the bot.", 25);
-            Tier2ChestBotCost = Config.Wrap("Bot Inventory", "Tier2ChestBotCost", "Base price of a large chest for the bot.", 50);
-            Tier3ChestBotCost = Config.Wrap("Bot Inventory", "Tier3ChestBotCost", "Base price of a legendary chest for the bot.", 400);
-            EquipmentBuyChance = Config.Wrap("Bot Inventory", "EquipmentBuyChance", "Chance between 0 and 100 for a bot to buy from an equipment barrel instead of a tier 1 chest. Only active while the bot does not have a equipment item. (Default: 15)", 15);
-            MinBuyingDelay = Config.Wrap("Bot Inventory", "MinBuyingDelay", "Minimum delay in seconds between the time it takes for a bot checks to buy an item.", 0f);
-            MaxBuyingDelay = Config.Wrap("Bot Inventory", "MaxBuyingDelay", "Maximum delay in seconds between the time it takes for a bot checks to buy an item.", 5f);
-            ShowBuyMessages = Config.Wrap("Bot Inventory", "ShowBuyMessages", "Displays whenever a bot buys an item in chat.", true);
+            AutoPurchaseItems = Config.Bind("Bot Inventory", "AutoPurchaseItems", true, "Maximum amount of purchases a playerbot can do per stage. Items are purchased directly instead of from chests.");
+            MaxBotPurchasesPerStage = Config.Bind("Bot Inventory", "MaxBotPurchasesPerStage", 10, "Maximum amount of putchases a playerbot can do per stage.");
+            Tier1ChestBotWeight = Config.Bind("Bot Inventory", "Tier1ChestBotWeight", 0.8f, "Weight of a bot picking an item from a small chest's loot table.");
+            Tier2ChestBotWeight = Config.Bind("Bot Inventory", "Tier2ChestBotWeight", 0.2f, "Weight of a bot picking an item from a large chest's loot table.");
+            Tier3ChestBotWeight = Config.Bind("Bot Inventory", "Tier3ChestBotWeight", 0f, "Weight of a bot picking an item from a legendary chest's loot table.");
+            Tier1ChestBotCost = Config.Bind("Bot Inventory", "Tier1ChestBotCost", 25, "Base price of a small chest for the bot.");
+            Tier2ChestBotCost = Config.Bind("Bot Inventory", "Tier2ChestBotCost", 50, "Base price of a large chest for the bot.");
+            Tier3ChestBotCost = Config.Bind("Bot Inventory", "Tier3ChestBotCost", 400, "Base price of a legendary chest for the bot.");
+            EquipmentBuyChance = Config.Bind("Bot Inventory", "EquipmentBuyChance", 15, "Chance between 0 and 100 for a bot to buy from an equipment barrel instead of a tier 1 chest. Only active while the bot does not have a equipment item. (Default: 15)");
+            MinBuyingDelay = Config.Bind("Bot Inventory", "MinBuyingDelay", 0f, "Minimum delay in seconds between the time it takes for a bot checks to buy an item.");
+            MaxBuyingDelay = Config.Bind("Bot Inventory", "MaxBuyingDelay", 5f, "Maximum delay in seconds between the time it takes for a bot checks to buy an item.");
+            ShowBuyMessages = Config.Bind("Bot Inventory", "ShowBuyMessages", true, "Displays whenever a bot buys an item in chat.");
 
-            HostOnlySpawnBots = Config.Wrap("Misc", "HostOnlySpawnBots", "Set true so that only the host may spawn bots", true);
-            ShowNameplates = Config.Wrap("Misc", "ShowNameplates", "Show player nameplates on playerbots if PlayerMode == false. (Host only)", true);
+            HostOnlySpawnBots = Config.Bind("Misc", "HostOnlySpawnBots", true, "Set true so that only the host may spawn bots");
+            ShowNameplates = Config.Bind("Misc", "ShowNameplates", true, "Show player nameplates on playerbots if PlayerMode == false. (Host only)");
 
-            PlayerMode = Config.Wrap("Player Mode", "PlayerMode", "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.", false);
-            DontScaleInteractables = Config.Wrap("Player Mode", "DontScaleInteractables", "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.", true);
-            BotsUseInteractables = Config.Wrap("Player Mode", "BotsUseInteractables", "[Experimental] Allow bots to use interactables. Only active is PlayerMode is true.", false);
-            ContinueAfterDeath = Config.Wrap("Player Mode", "ContinueAfterDeath", "Continues the game even after all real players have died. Only active is PlayerMode is true.", false);
+            PlayerMode = Config.Bind("Player Mode", "PlayerMode", false, "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.");
+            DontScaleInteractables = Config.Bind("Player Mode", "DontScaleInteractables", true, "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.");
+            BotsUseInteractables = Config.Bind("Player Mode", "BotsUseInteractables", false, "[Experimental] Allow bots to use interactables. Only active is PlayerMode is true.");
+            ContinueAfterDeath = Config.Bind("Player Mode", "ContinueAfterDeath", false, "Continues the game even after all real players have died. Only active is PlayerMode is true.");
 
             // Sanity check
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
@@ -112,11 +112,11 @@ namespace PlayerBots
             AiSkillHelperCatalog.Populate();
 
             // Config
-            InitialBots = new ConfigWrapper<int>[RandomSurvivorsList.Count];
+            InitialBots = new ConfigEntry<int>[RandomSurvivorsList.Count];
             for (int i = 0; i < RandomSurvivorsList.Count; i++)
             {
                 string name = BodyCatalog.GetBodyName(SurvivorCatalog.GetBodyIndexFromSurvivorIndex(RandomSurvivorsList[i]));
-                InitialBots[i] = Config.Wrap("Starting Bots", "StartingBots." + name, "Starting amount of bots to spawn at the start of a run. (" + name + ")", 0);
+                InitialBots[i] = Config.Bind("Starting Bots", "StartingBots." + name, 0, "Starting amount of bots to spawn at the start of a run. (" + name + ")");
             }
 
             // Equipments
