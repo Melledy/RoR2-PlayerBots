@@ -74,7 +74,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill4.aimType = AISkillDriver.AimType.AtCurrentEnemy;
             skill4.ignoreNodeGraph = false;
             skill4.resetCurrentEnemyOnNextDriverSelection = false;
-            skill4.noRepeat = false;
+            skill4.noRepeat = true;
             skill4.shouldSprint = false;
 
             AISkillDriver skill1 = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;
@@ -93,6 +93,7 @@ namespace PlayerBots.AI.SkillHelpers.Custom
             skill1.resetCurrentEnemyOnNextDriverSelection = false;
             skill1.noRepeat = false;
             skill1.shouldSprint = false;
+            skill1.buttonPressType = AISkillDriver.ButtonPressType.TapContinuous;
 
             // Add default skills
             AddDefaultSkills(gameObject, ai, 10);

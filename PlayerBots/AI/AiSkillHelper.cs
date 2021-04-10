@@ -33,7 +33,7 @@ namespace PlayerBots.AI
             skill.skillSlot = RoR2.SkillSlot.None;
             skill.requireSkillReady = false;
             skill.moveTargetType = AISkillDriver.TargetType.CurrentLeader;
-            skill.minDistance = 50;
+            skill.minDistance = 60;
             skill.maxDistance = float.PositiveInfinity;
             skill.selectionRequiresTargetLoS = false;
             skill.activationRequiresTargetLoS = false;
