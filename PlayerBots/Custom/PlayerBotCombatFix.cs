@@ -236,7 +236,7 @@ namespace PlayerBots.Custom
         private void ForceCustomSkillDriver()
         {
             // Activate skill driver if not in combat
-            if (master.GetBody().outOfCombat && master.GetBody().outOfDanger && this.ai.customTarget.gameObject != null && this.ai.skillDriverEvaluation.dominantSkillDriver != this.customTargetSkillDriver)
+            if (master.GetBody() != null && master.GetBody().outOfCombat && master.GetBody().outOfDanger && this.ai.customTarget.gameObject != null && this.ai.skillDriverEvaluation.dominantSkillDriver != this.customTargetSkillDriver)
             {
                 this.ai.skillDriverEvaluation = new BaseAI.SkillDriverEvaluation
                 {
