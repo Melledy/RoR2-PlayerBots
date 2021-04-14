@@ -41,6 +41,11 @@ namespace PlayerBots.Custom
         {
             // Fix bunny hopping
             this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
+            // Skip if no body object
+            if (!this.master.GetBody())
+            {
+                return;
+            }
             // Remove the default combat delay with ai
             if (this.stateMachine.state is Combat)
             {
@@ -76,7 +81,7 @@ namespace PlayerBots.Custom
                 ForceCustomSkillDriver();
             }
             // Equipment
-            if (this.master.GetBody() && !this.master.IsDeadAndOutOfLivesServer())
+            if (!this.master.IsDeadAndOutOfLivesServer())
             {
                 ProcessEquipment();
             }
