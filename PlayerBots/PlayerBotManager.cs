@@ -7,7 +7,6 @@ using RoR2.CharacterAI;
 using RoR2.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -84,18 +83,25 @@ namespace PlayerBots
                 orig(self);
             };
 
+            // Content manager load hook - Will find a better place for this later
+            On.RoR2.SurvivorCatalog.Init += (orig) =>
+            {
+                orig();
+                OnContentLoad();
+            };
+
             // Apply hooks
             PlayerBotHooks.AddHooks();
         }
 
-        public void Start()
+        public void OnContentLoad()
         {
             // Set survivor dict
             SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("hunt", SurvivorCatalog.FindSurvivorIndex("Huntress"));
-            SurvivorDict.Add("huntress", SurvivorCatalog.FindSurvivorIndex(".Huntress"));
+            SurvivorDict.Add("huntress", SurvivorCatalog.FindSurvivorIndex("Huntress"));
             SurvivorDict.Add("engi", SurvivorCatalog.FindSurvivorIndex("Engi"));
             SurvivorDict.Add("engineer", SurvivorCatalog.FindSurvivorIndex("Engi"));
             SurvivorDict.Add("mage", SurvivorCatalog.FindSurvivorIndex("Mage"));
