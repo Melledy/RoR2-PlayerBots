@@ -84,11 +84,7 @@ namespace PlayerBots
             };
 
             // Content manager load hook - Will find a better place for this later
-            On.RoR2.SurvivorCatalog.Init += (orig) =>
-            {
-                orig();
-                OnContentLoad();
-            };
+            RoR2Application.onLoad += OnContentLoad;
 
             // Apply hooks
             PlayerBotHooks.AddHooks();
@@ -121,7 +117,7 @@ namespace PlayerBots
             InitialBots = new ConfigEntry<int>[RandomSurvivorsList.Count];
             for (int i = 0; i < RandomSurvivorsList.Count; i++)
             {
-                string name = BodyCatalog.GetBodyName(SurvivorCatalog.GetBodyIndexFromSurvivorIndex(RandomSurvivorsList[i]));
+                string name = BodyCatalog.GetBodyName(SurvivorCatalog.GetBodyIndexFromSurvivorIndex(RandomSurvivorsList[i])).Replace("\'", "");
                 InitialBots[i] = Config.Bind("Starting Bots", "StartingBots." + name, 0, "Starting amount of bots to spawn at the start of a run. (" + name + ")");
             }
         }
