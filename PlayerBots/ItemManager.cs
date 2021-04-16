@@ -18,9 +18,6 @@ namespace PlayerBots
         private Run.FixedTimeStamp lastBuyCheck;
         private float buyingDelay;
 
-        public static EquipmentIndex[] usableEquipment;
-        public static List<PickupIndex> equipmentPickups;
-
         public void Awake()
         {
             this.master = base.gameObject.GetComponent<CharacterMaster>();

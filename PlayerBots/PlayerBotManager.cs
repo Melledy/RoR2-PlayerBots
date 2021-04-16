@@ -124,16 +124,6 @@ namespace PlayerBots
                 string name = BodyCatalog.GetBodyName(SurvivorCatalog.GetBodyIndexFromSurvivorIndex(RandomSurvivorsList[i]));
                 InitialBots[i] = Config.Bind("Starting Bots", "StartingBots." + name, 0, "Starting amount of bots to spawn at the start of a run. (" + name + ")");
             }
-
-            // Equipments
-            IndexManager.Build();
-
-            ItemManager.usableEquipment = new EquipmentIndex[] {
-                EquipmentCatalog.FindEquipmentIndex("CommandMissile"), EquipmentCatalog.FindEquipmentIndex("BFG"), EquipmentCatalog.FindEquipmentIndex("Lightning"), EquipmentCatalog.FindEquipmentIndex("CritOnUse"),
-                EquipmentCatalog.FindEquipmentIndex("Blackhole"), EquipmentCatalog.FindEquipmentIndex("Fruit"), EquipmentCatalog.FindEquipmentIndex("GainArmor"), EquipmentCatalog.FindEquipmentIndex("Cleanse"),
-                EquipmentCatalog.FindEquipmentIndex("PassiveHealing"), EquipmentCatalog.FindEquipmentIndex("TeamWarCry"), EquipmentCatalog.FindEquipmentIndex("DeathProjectile"), EquipmentCatalog.FindEquipmentIndex("LifestealOnHit")
-            };
-            ItemManager.equipmentPickups = ItemManager.usableEquipment.Select(e => PickupCatalog.FindPickupIndex(e)).Where(e => e != null).ToList();
         }
 
         public static int GetInitialBotCount()

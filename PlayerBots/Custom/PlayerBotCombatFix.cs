@@ -269,14 +269,14 @@ namespace PlayerBots.Custom
             {
                 // TODO Cleanup later
                 EquipmentIndex e = this.master.inventory.currentEquipmentIndex;
-                if (e == IndexManager.CommandMissile || e == IndexManager.Lightning || e == IndexManager.DeathProjectile)
+                if (e == RoR2Content.Equipment.CommandMissile.equipmentIndex || e == RoR2Content.Equipment.Lightning.equipmentIndex || e == RoR2Content.Equipment.DeathProjectile.equipmentIndex)
                 {
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS)
                     {
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.BFG)
+                else if (e == RoR2Content.Equipment.BFG.equipmentIndex)
                 {
                     // Dont spam preon at random mobs
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.characterBody != null && this.ai.currentEnemy.hasLoS &&
@@ -285,9 +285,9 @@ namespace PlayerBots.Custom
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.CritOnUse)
+                else if (e == RoR2Content.Equipment.CritOnUse.equipmentIndex)
                 {
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(IndexManager.BuffFullCrit))
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(RoR2Content.Buffs.FullCrit.buffIndex))
                     {
                         if (this.master.GetBody().crit >= 100f)
                         {
@@ -300,37 +300,37 @@ namespace PlayerBots.Custom
                         }
                     }
                 }
-                else if (e == IndexManager.TeamWarCry)
+                else if (e == RoR2Content.Equipment.TeamWarCry.equipmentIndex)
                 {
-                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(IndexManager.BuffTeamWarCry))
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.HasBuff(RoR2Content.Buffs.TeamWarCry.buffIndex))
                     {
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.Blackhole)
+                else if (e == RoR2Content.Equipment.Blackhole.equipmentIndex)
                 {
                     if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.lastEquipmentUse.timeSince >= 10f)
                     {
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.LifestealOnHit || e == IndexManager.PassiveHealing || e == IndexManager.Fruit)
+                else if (e == RoR2Content.Equipment.LifestealOnHit.equipmentIndex || e == RoR2Content.Equipment.PassiveHealing.equipmentIndex || e == RoR2Content.Equipment.Fruit.equipmentIndex)
                 {
-                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(IndexManager.BuffHealingDisabled))
+                    if (this.master.GetBody().healthComponent.combinedHealthFraction <= .5 && !this.HasBuff(RoR2Content.Buffs.HealingDisabled.buffIndex))
                     {
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.GainArmor)
+                else if (e == RoR2Content.Equipment.GainArmor.equipmentIndex)
                 {
                     if (this.master.GetBody().healthComponent.combinedHealthFraction <= .35 && this.master.GetBody().healthComponent.timeSinceLastHit <= 1.0f)
                     {
                         FireEquipment();
                     }
                 }
-                else if (e == IndexManager.Cleanse)
+                else if (e == RoR2Content.Equipment.Cleanse.equipmentIndex)
                 {
-                    if (this.HasBuff(IndexManager.BuffOnFire) || this.HasBuff(IndexManager.BuffHealingDisabled))
+                    if (this.HasBuff(RoR2Content.Buffs.OnFire.buffIndex) || this.HasBuff(RoR2Content.Buffs.HealingDisabled.buffIndex))
                     {
                         FireEquipment();
                     }
