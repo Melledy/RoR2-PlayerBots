@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PlayerBots.AI.SkillHelpers.Custom
 {
     [SkillHelperSurvivor("ExampleSurvivorBody")]
-    [CustomSurvivor("https://thunderstore.io/package/ArcsinJesse/Riven/", "0.3.3")]
+    [CustomSurvivor("https://thunderstore.io/package/ArcsinJesse/Riven/", "0.3.4")]
     class RivenHelper : AiSkillHelper
     {
         public override void InjectSkills(GameObject gameObject, BaseAI ai)
