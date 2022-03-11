@@ -165,7 +165,7 @@ namespace PlayerBots
             card.occupyPosition = false;
             card.sendOverNetwork = true;
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
-            card.prefab = Resources.Load<GameObject>("prefabs/charactermasters/CommandoMaster");
+            card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMaster");
             card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
             card.bodyPrefab = bodyPrefab;
 
@@ -247,7 +247,7 @@ namespace PlayerBots
             card.occupyPosition = false;
             card.sendOverNetwork = true;
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
-            card.prefab = Resources.Load<GameObject>("prefabs/charactermasters/CommandoMonsterMaster");
+            card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMonsterMaster");
             card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
             card.bodyPrefab = bodyPrefab;
 
