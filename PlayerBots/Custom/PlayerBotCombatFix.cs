@@ -335,6 +335,27 @@ namespace PlayerBots.Custom
                         FireEquipment();
                     }
                 }
+                else if (e == DLC1Content.Equipment.Molotov.equipmentIndex)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && !this.ai.currentEnemy.characterBody.isFlying && this.lastEquipmentUse.timeSince >= 10f)
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == DLC1Content.Equipment.BossHunter.equipmentIndex)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.ai.currentEnemy.characterBody.isBoss)
+                    {
+                        FireEquipment();
+                    }
+                }
+                else if (e == DLC1Content.Equipment.GummyClone.equipmentIndex)
+                {
+                    if (this.ai.currentEnemy != null && this.ai.currentEnemy.hasLoS && this.master.GetBody().healthComponent.combinedHealthFraction <= .9 && this.lastEquipmentUse.timeSince >= 5f)
+                    {
+                        FireEquipment();
+                    }
+                }
                 else 
                 {
                     this.master.inventory.SetEquipmentIndex(EquipmentIndex.None);
