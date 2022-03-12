@@ -154,6 +154,7 @@ namespace PlayerBots
             // Fix custom targets
             On.RoR2.CharacterAI.BaseAI.Target.GetBullseyePosition += Hook_GetBullseyePosition;
 
+            // Player mode
             if (PlayerBotManager.PlayerMode.Value)
             {
                 On.RoR2.SceneDirector.PlaceTeleporter += (orig, self) =>
@@ -221,7 +222,7 @@ namespace PlayerBots
                 };
 
                 // Spectator fix
-                On.RoR2.CameraRigController.CanUserSpectateBody += (orig, viewer, body) =>
+                On.RoR2.CameraRigControllerSpectateControls.CanUserSpectateBody += (orig, viewer, body) =>
                 {
                     return body.isPlayerControlled || orig(viewer, body);
                 };

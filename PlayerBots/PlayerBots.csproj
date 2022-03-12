@@ -29,8 +29,8 @@
     <Reference Include="LegacyResourcesAPI">
       <HintPath>..\..\..\Programs\Steam\steamapps\common\Risk of Rain 2\Risk of Rain 2_Data\Managed\LegacyResourcesAPI.dll</HintPath>
     </Reference>
-    <Reference Include="MMHOOK_Assembly-CSharp">
-      <HintPath>..\..\..\Programs\Steam\steamapps\common\Risk of Rain 2\BepInEx\plugins\MMHOOK\MMHOOK_Assembly-CSharp.dll</HintPath>
+    <Reference Include="MMHOOK_RoR2">
+      <HintPath>..\..\..\Programs\Steam\steamapps\common\Risk of Rain 2\BepInEx\plugins\MMHOOK\MMHOOK_RoR2.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\Programs\Steam\steamapps\common\Risk of Rain 2\BepInEx\core\Mono.Cecil.dll</HintPath>
