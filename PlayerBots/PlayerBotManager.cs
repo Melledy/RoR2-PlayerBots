@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace PlayerBots
 {
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.5.3")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.6.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
@@ -109,6 +109,14 @@ namespace PlayerBots
             SurvivorDict.Add("treebot", SurvivorCatalog.FindSurvivorIndex("Treebot"));
             SurvivorDict.Add("croco", SurvivorCatalog.FindSurvivorIndex("Croco"));
             SurvivorDict.Add("capt", SurvivorCatalog.FindSurvivorIndex("Captain"));
+            SurvivorDict.Add("captain", SurvivorCatalog.FindSurvivorIndex("Captain"));
+
+            // SoTV survivors
+            SurvivorDict.Add("railgunner", SurvivorCatalog.FindSurvivorIndex("Railgunner"));
+            SurvivorDict.Add("rail", SurvivorCatalog.FindSurvivorIndex("Railgunner"));
+            SurvivorDict.Add("void", SurvivorCatalog.FindSurvivorIndex("VoidSurvivor"));
+            SurvivorDict.Add("voidfiend", SurvivorCatalog.FindSurvivorIndex("VoidSurvivor"));
+            SurvivorDict.Add("voidsurvivor", SurvivorCatalog.FindSurvivorIndex("VoidSurvivor"));
 
             // Add skill helpers
             AiSkillHelperCatalog.Populate();
@@ -151,6 +159,11 @@ namespace PlayerBots
             {
                 return;
             }
+            else if (!def.CheckRequiredExpansionEnabled())
+            {
+                Debug.Log("You do not have the proper expansion enabled.");
+                return;
+            }
 
             GameObject bodyPrefab = def.bodyPrefab;
             if (bodyPrefab == null)
@@ -166,8 +179,7 @@ namespace PlayerBots
             card.sendOverNetwork = true;
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
             card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMaster");
-            card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
-            card.bodyPrefab = bodyPrefab;
+            //card.bodyPrefab = bodyPrefab;
 
             // Spawn
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
@@ -178,7 +190,6 @@ namespace PlayerBots
                 spawnOnTarget = owner.GetBody().transform
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
-            //spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
 
             spawnRequest.onSpawnedServer = result =>
@@ -197,6 +208,10 @@ namespace PlayerBots
                     PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
                     playerMaster.name = "PlayerBot";
 
+                    // Required to bypass entitlements
+                    master.bodyPrefab = bodyPrefab;
+                    master.Respawn(master.transform.position, master.transform.rotation);
+
                     // Random skin
                     SetRandomSkin(master, bodyPrefab);
 
@@ -204,6 +219,7 @@ namespace PlayerBots
                     master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
                     master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
 
+                    // Starting items
                     GiveStartingItems(owner, master);
 
                     // Add custom skills
@@ -233,6 +249,11 @@ namespace PlayerBots
             {
                 return;
             }
+            else if (!def.CheckRequiredExpansionEnabled())
+            {
+                Debug.Log("You do not have the proper expansion enabled.");
+                return;
+            }
 
             GameObject bodyPrefab = def.bodyPrefab;
             if (bodyPrefab == null)
@@ -248,7 +269,6 @@ namespace PlayerBots
             card.sendOverNetwork = true;
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
             card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMonsterMaster");
-            card.playerbotName = bodyPrefab.GetComponent<CharacterBody>().GetDisplayName();
             card.bodyPrefab = bodyPrefab;
 
             // Spawn request
@@ -366,7 +386,7 @@ namespace PlayerBots
                 {
                     randomSurvivorIndex = random.Next(0, RandomSurvivorsList.Count);
                 }
-                while (randomSurvivorIndex == lastCharacterType && RandomSurvivorsList.Count > 1);
+                while ((randomSurvivorIndex == lastCharacterType || !SurvivorCatalog.GetSurvivorDef((SurvivorIndex) RandomSurvivorsList[randomSurvivorIndex]).CheckRequiredExpansionEnabled()) && RandomSurvivorsList.Count > 1);
 
                 SpawnPlayerbot(owner, RandomSurvivorsList[randomSurvivorIndex]);
 

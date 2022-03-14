@@ -6,7 +6,6 @@ namespace PlayerBots.Custom
 {
     class PlayerBotSpawnCard : CharacterSpawnCard
     {
-        public string playerbotName;
         public GameObject bodyPrefab;
 
         public PlayerBotSpawnCard()

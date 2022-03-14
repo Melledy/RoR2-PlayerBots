@@ -202,6 +202,16 @@ namespace PlayerBots
                     orig(self);
                 };
 
+                // Entitlements. Required for dlc survivors. TODO: Find a better way
+                On.RoR2.ExpansionManagement.ExpansionRequirementComponent.PlayerCanUseBody += (orig, self, master) =>
+                {
+                    if (master.name.Equals("PlayerBot"))
+                    {
+                        return true;
+                    }
+                    return orig(self, master);
+                };
+
                 // Required for bots to even move, maybe switch to il later
                 On.RoR2.PlayerCharacterMasterController.Update += (orig, self) =>
                 {
