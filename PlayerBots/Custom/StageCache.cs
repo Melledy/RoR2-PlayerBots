@@ -9,7 +9,7 @@ namespace PlayerBots.Custom
     class StageCache
     {
         public List<BotInteractable<PurchaseInteraction>> interactablesItem;
-        public List<BarrelInteraction> interactablesBarrel;
+        //public List<BarrelInteraction> interactablesBarrel;
 
         public StageCache()
         {
@@ -20,21 +20,23 @@ namespace PlayerBots.Custom
         {
             // Clear and update
             this.interactablesItem.Clear();
-            this.interactablesBarrel = InstanceTracker.GetInstancesList<BarrelInteraction>();
+            //this.interactablesBarrel = InstanceTracker.GetInstancesList<BarrelInteraction>();
 
             // Process multishops
             MultiShopController[] multishops = GameObject.FindObjectsOfType<MultiShopController>();
 
             foreach (MultiShopController multishop in multishops)
             {
-                GameObject[] terminalGameObjects = multishop.GetFieldValue<GameObject[]>("terminalGameObjects");
+                GameObject[] terminalGameObjects = multishop.GetFieldValue<GameObject[]>("_terminalGameObjects");
                 if (terminalGameObjects != null)
                 {
                     foreach (GameObject terminal in terminalGameObjects)
                     {
+                        // TODO: Check if pickup is higher priority
+                        /*
                         ShopTerminalBehavior shop = terminal.GetComponent<ShopTerminalBehavior>();
                         PickupIndex pickup = shop.GetFieldValue<PickupIndex>("pickupIndex");
-                        // TODO: Check if pickup is higher priority
+                        */
 
                         // FILLER
                         this.interactablesItem.Add(new BotInteractable<PurchaseInteraction>(terminal.gameObject));

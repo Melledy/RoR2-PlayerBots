@@ -4,12 +4,14 @@ using RoR2.CharacterAI;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace PlayerBots.Custom
 {
     class PlayerBotCombatFix : MonoBehaviour
     {
         private CharacterMaster master;
+        private CharacterBody body;
         private EntityStateMachine stateMachine;
         private BaseAI ai;
         private Interactor bodyInteractor;
@@ -27,6 +29,7 @@ namespace PlayerBots.Custom
 
             if (ai is PlayerBotBaseAI) {
                 customTargetSkillDriver = ai.skillDrivers.First(driver => driver.customName.Equals("CustomTargetLeash"));
+                body = master.GetBody();
                 bodyInteractor = master.GetBody().GetComponent<Interactor>();
                 this.stageCache = new StageCache();
             }
@@ -46,6 +49,12 @@ namespace PlayerBots.Custom
             {
                 return;
             }
+            // Check if body interactor has changed
+            if (this.body != this.master.GetBody())
+            {
+                body = master.GetBody();
+                bodyInteractor = master.GetBody().GetComponent<Interactor>();
+            }
             // Remove the default combat delay with ai
             if (this.stateMachine.state is Combat)
             {
@@ -57,8 +66,15 @@ namespace PlayerBots.Custom
                 // Check if stage has changed
                 if (Stage.instance != this.currentStage || this.currentStage == null)
                 {
-                    this.stageCache.Update();
                     this.currentStage = Stage.instance;
+                    try
+                    {
+                        this.stageCache.Update();
+                    }
+                    catch (Exception e) 
+                    {
+                        Debug.LogError(e);
+                    }
                 }
                 // Clear
                 this.ai.customTarget.gameObject = null;
@@ -101,18 +117,18 @@ namespace PlayerBots.Custom
                 GenericPickupController pickup = pickups[i];
 
                 // Skip lunar coins
-                if (pickup.pickupIndex.coinValue > 0)
+                if (PickupCatalog.GetPickupDef(pickup.pickupIndex).coinValue > 0)
                 {
                     continue;
                 }
 
                 // Skip these
-                ItemDef def = ItemCatalog.GetItemDef(pickup.pickupIndex.itemIndex);
+                ItemDef def = ItemCatalog.GetItemDef(PickupCatalog.GetPickupDef(pickup.pickupIndex).itemIndex);
                 if (def != null && def.tier == ItemTier.Lunar)
                 {
                     continue;
                 }
-                EquipmentIndex equipmentIndex = pickup.pickupIndex.equipmentIndex;
+                EquipmentIndex equipmentIndex = PickupCatalog.GetPickupDef(pickup.pickupIndex).equipmentIndex;
                 if (equipmentIndex != EquipmentIndex.None)
                 {
                     if (EquipmentCatalog.GetEquipmentDef(equipmentIndex).isLunar)
@@ -180,24 +196,6 @@ namespace PlayerBots.Custom
             if (CheckTeleporter())
             {
                 return;
-            }
-
-            // Barrels
-            foreach (BarrelInteraction interactable in this.stageCache.interactablesBarrel)
-            {
-                if (interactable.GetInteractability(this.bodyInteractor) == Interactability.Available)
-                {
-                    float dist = Vector3.Distance(this.master.GetBody().transform.position, interactable.gameObject.transform.position);
-                    if (dist <= bodyInteractor.maxInteractionDistance)
-                    {
-                        bodyInteractor.AttemptInteraction(interactable.gameObject);
-                    }
-                    if (closest == null || dist < closestDist)
-                    {
-                        closest = interactable.gameObject;
-                        closestDist = dist;
-                    }
-                }
             }
 
             if (closest)

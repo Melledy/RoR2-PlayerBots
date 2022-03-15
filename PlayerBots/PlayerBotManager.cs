@@ -26,7 +26,6 @@ namespace PlayerBots
         // Config options
         public static ConfigEntry<int> InitialRandomBots { get; set; }
         public static ConfigEntry<int>[] InitialBots;
-        public static bool allRealPlayersDead;
 
         public static ConfigEntry<int> MaxBotPurchasesPerStage { get; set; }
         public static ConfigEntry<bool> AutoPurchaseItems { get; set; }
@@ -46,6 +45,9 @@ namespace PlayerBots
         public static ConfigEntry<bool> DontScaleInteractables { get; set; }
         public static ConfigEntry<bool> BotsUseInteractables { get; set; }
         public static ConfigEntry<bool> ContinueAfterDeath { get; set; }
+
+        //
+        public static bool allRealPlayersDead;
 
         public void Awake()
         {
@@ -70,8 +72,8 @@ namespace PlayerBots
 
             PlayerMode = Config.Bind("Player Mode", "PlayerMode", false, "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.");
             DontScaleInteractables = Config.Bind("Player Mode", "DontScaleInteractables", true, "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.");
-            BotsUseInteractables = Config.Bind("Player Mode", "BotsUseInteractables", false, "[Experimental] Allow bots to use interactables. Only active is PlayerMode is true.");
-            ContinueAfterDeath = Config.Bind("Player Mode", "ContinueAfterDeath", false, "Continues the game even after all real players have died. Only active is PlayerMode is true.");
+            BotsUseInteractables = Config.Bind("Player Mode", "BotsUseInteractables", false, "[Experimental] Allow bots to use interactables, such as buying from a chest and picking up items on the ground. Only active is PlayerMode is true.");
+            ContinueAfterDeath = Config.Bind("Player Mode", "ContinueAfterDeath", false, "Bots will activate and use teleporters when all real players die. Only active is PlayerMode is true.");
 
             // Sanity check
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
