@@ -18,14 +18,22 @@ namespace PlayerBots.Custom
         private Run.FixedTimeStamp lastEquipmentUse;
         private Stage currentStage;
 
+        // Cached variables
         private AISkillDriver customTargetSkillDriver;
         private StageCache stageCache;
+        private InfiniteTowerRun infiniteTowerRun;
+        private int infiniteTowerWave;
 
         public void Awake()
         {
             this.master = base.GetComponent<CharacterMaster>();
             this.ai = base.GetComponent<BaseAI>();
             this.stateMachine = base.GetComponent<EntityStateMachine>();
+
+            if (Run.instance is InfiniteTowerRun) 
+            {
+                infiniteTowerRun = (InfiniteTowerRun) Run.instance;
+            }
 
             if (ai is PlayerBotBaseAI) {
                 customTargetSkillDriver = ai.skillDrivers.First(driver => driver.customName.Equals("CustomTargetLeash"));
@@ -60,46 +68,79 @@ namespace PlayerBots.Custom
             {
                 ((Combat)this.stateMachine.state).SetFieldValue("aiUpdateTimer", 0);
             }
-            // Use interactables
-            if (CanInteract())
+            // Infinite tower override (Simulacrum)
+            if (infiniteTowerRun)
             {
-                // Check if stage has changed
-                if (Stage.instance != this.currentStage || this.currentStage == null)
-                {
-                    this.currentStage = Stage.instance;
-                    try
-                    {
-                        this.stageCache.Update();
-                    }
-                    catch (Exception e) 
-                    {
-                        Debug.LogError(e);
-                    }
-                }
-                // Clear
-                this.ai.customTarget.gameObject = null;
-                this.customTargetSkillDriver.minDistance = 0;
-                // Pickups
-                PickupItems();
-                // Check interactables
-                CheckInteractables();
-                // Force custom skill driver if not in combat
-                ForceCustomSkillDriver();
+                InfiniteTowerRunLogic();
             }
-            else if (PlayerBotManager.allRealPlayersDead && PlayerBotManager.ContinueAfterDeath.Value)
+            else 
             {
-                // Clear
-                this.ai.customTarget.gameObject = null;
-                this.customTargetSkillDriver.minDistance = 0;
-                // Force bot to use teleporter after player dies
-                CheckTeleporter();
-                // Force custom skill driver if not in combat
-                ForceCustomSkillDriver();
+                // Use interactables
+                if (CanInteract())
+                {
+                    // Check if stage has changed
+                    if (Stage.instance != this.currentStage || this.currentStage == null)
+                    {
+                        this.currentStage = Stage.instance;
+                        try
+                        {
+                            this.stageCache.Update();
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError(e);
+                        }
+                    }
+                    // Clear
+                    this.ai.customTarget.gameObject = null;
+                    this.customTargetSkillDriver.minDistance = 0;
+                    // Pickups
+                    PickupItems();
+                    // Check interactables
+                    CheckInteractables();
+                    // Force custom skill driver if not in combat
+                    ForceCustomSkillDriver();
+                }
+                else if (PlayerBotManager.allRealPlayersDead && PlayerBotManager.ContinueAfterDeath.Value)
+                {
+                    // Clear
+                    this.ai.customTarget.gameObject = null;
+                    this.customTargetSkillDriver.minDistance = 0;
+                    // Force bot to use teleporter after player dies
+                    CheckTeleporter();
+                    // Force custom skill driver if not in combat
+                    ForceCustomSkillDriver();
+                }
             }
             // Equipment
             if (!this.master.IsDeadAndOutOfLivesServer())
             {
                 ProcessEquipment();
+            }
+        }
+
+        public void InfiniteTowerRunLogic() 
+        {
+            // Safe ward cached variable
+            InfiniteTowerSafeWardController safeWardController = infiniteTowerRun.GetFieldValue<InfiniteTowerSafeWardController>("safeWardController");
+            // Respawn after each wave
+            if (infiniteTowerWave != infiniteTowerRun.waveIndex)
+            {
+                infiniteTowerWave = infiniteTowerRun.waveIndex;
+                if (PlayerBotManager.RespawnAfterWave.Value && this.master.IsDeadAndOutOfLivesServer()) 
+                {
+                    if (safeWardController)
+                        this.master.Respawn(safeWardController.transform.position, safeWardController.transform.rotation);
+                    else
+                        this.master.Respawn(this.master.transform.position, this.master.transform.rotation);
+                }
+            }
+            // Clear
+            this.ai.customTarget.gameObject = null;
+            this.customTargetSkillDriver.minDistance = 0;
+            if (safeWardController) 
+            {
+                this.ai.customTarget.gameObject = safeWardController.gameObject;
             }
         }
 

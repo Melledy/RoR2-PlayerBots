@@ -45,6 +45,7 @@ namespace PlayerBots
         public static ConfigEntry<bool> DontScaleInteractables { get; set; }
         public static ConfigEntry<bool> BotsUseInteractables { get; set; }
         public static ConfigEntry<bool> ContinueAfterDeath { get; set; }
+        public static ConfigEntry<bool> RespawnAfterWave { get; set; }
 
         //
         public static bool allRealPlayersDead;
@@ -74,6 +75,8 @@ namespace PlayerBots
             DontScaleInteractables = Config.Bind("Player Mode", "DontScaleInteractables", true, "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.");
             BotsUseInteractables = Config.Bind("Player Mode", "BotsUseInteractables", false, "[Experimental] Allow bots to use interactables, such as buying from a chest and picking up items on the ground. Only active is PlayerMode is true.");
             ContinueAfterDeath = Config.Bind("Player Mode", "ContinueAfterDeath", false, "Bots will activate and use teleporters when all real players die. Only active is PlayerMode is true.");
+
+            RespawnAfterWave = Config.Bind("Simulacrum", "RespawnAfterWave", false, "Respawns bots after each wave in simulacrum");
 
             // Sanity check
             MaxBuyingDelay.Value = Math.Max(MaxBuyingDelay.Value, MinBuyingDelay.Value);
