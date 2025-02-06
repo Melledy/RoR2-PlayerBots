@@ -16,7 +16,6 @@ namespace PlayerBots.AI.SkillHelpers
             skill3.moveTargetType = AISkillDriver.TargetType.CurrentEnemy;
             skill3.minDistance = 0;
             skill3.maxDistance = 20;
-            //skill3.maxUserHealthFraction = .25f;
             skill3.selectionRequiresTargetLoS = true;
             skill3.activationRequiresTargetLoS = false;
             skill3.activationRequiresAimConfirmation = false;

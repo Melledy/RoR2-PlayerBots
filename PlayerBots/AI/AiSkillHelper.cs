@@ -1,13 +1,32 @@
-﻿using RoR2.CharacterAI;
+﻿using PlayerBots.Custom;
+using RoR2.CharacterAI;
 using UnityEngine;
 
 namespace PlayerBots.AI
 {
     abstract class AiSkillHelper
     {
+        public PlayerBotController controller { get; set; }
+
+        // Events
+
+        public virtual void OnBodyChange()
+        {
+
+        }
+
+        public virtual void OnFixedUpdate()
+        {
+
+        }
+
+        // Skills
+
         public abstract void InjectSkills(GameObject gameObject, BaseAI ai);
+
         public void AddDefaultSkills(GameObject gameObject, BaseAI ai, float minDistanceFromEnemy)
         {
+            // Adds default skill drivers that all player bots should have
             AISkillDriver skill;
 
             skill = gameObject.AddComponent<AISkillDriver>() as AISkillDriver;

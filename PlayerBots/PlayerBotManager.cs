@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using PlayerBots.AI;
+using PlayerBots.AI.SkillHelpers;
 using PlayerBots.Custom;
 using RoR2;
 using RoR2.CharacterAI;
@@ -13,7 +14,7 @@ using UnityEngine;
 
 namespace PlayerBots
 {
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.6.1")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.7.0")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
@@ -69,9 +70,9 @@ namespace PlayerBots
             ShowBuyMessages = Config.Bind("Bot Inventory", "ShowBuyMessages", true, "Displays whenever a bot buys an item in chat.");
 
             HostOnlySpawnBots = Config.Bind("Misc", "HostOnlySpawnBots", true, "Set true so that only the host may spawn bots");
-            ShowNameplates = Config.Bind("Misc", "ShowNameplates", true, "Show player nameplates on playerbots if PlayerMode == false. (Host only)");
+            ShowNameplates = Config.Bind("Misc", "ShowNameplates", true, "Show player nameplates on playerbots if PlayerMode is false. (Host only)");
 
-            PlayerMode = Config.Bind("Player Mode", "PlayerMode", false, "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.");
+            PlayerMode = Config.Bind("Player Mode", "PlayerMode", true, "Makes the game treat playerbots like how regular players are treated. The bots now show up on the scoreboard, can pick up items, influence the map scaling, etc.");
             DontScaleInteractables = Config.Bind("Player Mode", "DontScaleInteractables", true, "Prevents interactables spawn count from scaling with bots. Only active is PlayerMode is true.");
             BotsUseInteractables = Config.Bind("Player Mode", "BotsUseInteractables", false, "[Experimental] Allow bots to use interactables, such as buying from a chest and picking up items on the ground. Only active is PlayerMode is true.");
             ContinueAfterDeath = Config.Bind("Player Mode", "ContinueAfterDeath", false, "Bots will activate and use teleporters when all real players die. Only active is PlayerMode is true.");
@@ -97,7 +98,7 @@ namespace PlayerBots
 
         public void OnContentLoad()
         {
-            // Set survivor dict
+            // Base game survivors
             SurvivorDict.Add("mult", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("mul-t", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
             SurvivorDict.Add("toolbot", SurvivorCatalog.FindSurvivorIndex("Toolbot"));
@@ -123,7 +124,13 @@ namespace PlayerBots
             SurvivorDict.Add("voidfiend", SurvivorCatalog.FindSurvivorIndex("VoidSurvivor"));
             SurvivorDict.Add("voidsurvivor", SurvivorCatalog.FindSurvivorIndex("VoidSurvivor"));
 
-            // Add skill helpers
+            // SotS survivors
+            SurvivorDict.Add("seeker", SurvivorCatalog.FindSurvivorIndex("Seeker"));
+            SurvivorDict.Add("chef", SurvivorCatalog.FindSurvivorIndex("Chef"));
+            SurvivorDict.Add("son", SurvivorCatalog.FindSurvivorIndex("FalseSon"));
+            SurvivorDict.Add("falseson", SurvivorCatalog.FindSurvivorIndex("FalseSon"));
+
+            // Init skill helpers
             AiSkillHelperCatalog.Populate();
 
             // Config
@@ -184,7 +191,6 @@ namespace PlayerBots
             card.sendOverNetwork = true;
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
             card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMaster");
-            //card.bodyPrefab = bodyPrefab;
 
             // Spawn
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
@@ -286,7 +292,6 @@ namespace PlayerBots
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
-            //spawnRequest.summonerBodyObject = owner.GetBody().gameObject;
 
             // Spawn
             GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
@@ -352,25 +357,37 @@ namespace PlayerBots
 
         private static void InjectSkillDrivers(GameObject gameObject, BaseAI ai, SurvivorIndex survivorIndex)
         {
-            AISkillDriver[] skillDrivers = gameObject.GetComponents<AISkillDriver>();
-            if (skillDrivers != null)
+            // Get skill helper
+            AiSkillHelper skillHelper = AiSkillHelperCatalog.CreateSkillHelper(survivorIndex);
+
+            // Remove old skill drivers if custom skill drivers exist
+            if (skillHelper.GetType() != typeof(DefaultSkillHelper))
             {
-                // Strip skills
-                StripSkills(skillDrivers);
+                // Get old skill drivers
+                AISkillDriver[] skillDrivers = gameObject.GetComponents<AISkillDriver>();
+                if (skillDrivers != null)
+                {
+                    // Remove skill drivers
+                    StripSkills(skillDrivers);
+                }
+
+                // Add skill drivers based on class
+                skillHelper.InjectSkills(gameObject, ai);
+
+                // Set new skill drivers
+                PropertyInfo property = typeof(BaseAI).GetProperty("skillDrivers");
+                property.DeclaringType.GetProperty("skillDrivers");
+                property.SetValue(ai, gameObject.GetComponents<AISkillDriver>(), BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
+            }
+            else
+            {
+                // Add leash skills
+                skillHelper.AddDefaultSkills(gameObject, ai, 0);
             }
 
-            // Add skill drivers based on class
-            AiSkillHelper skillHelper = AiSkillHelperCatalog.GetSkillHelperByIndex(survivorIndex);
-            //skillHelper.AddCustomTargetLeash(gameObject, ai);
-            skillHelper.InjectSkills(gameObject, ai);
-
-            // Set skill drivers
-            PropertyInfo property = typeof(BaseAI).GetProperty("skillDrivers");
-            property.DeclaringType.GetProperty("skillDrivers");
-            property.SetValue(ai, gameObject.GetComponents<AISkillDriver>(), BindingFlags.NonPublic | BindingFlags.Instance, null, null, null);
-
-            // Combat update timer fix
-            gameObject.AddComponent<PlayerBotCombatFix>();
+            // Add playerbot controller for extra behaviors and fixes
+            PlayerBotController controller = gameObject.AddComponent<PlayerBotController>();
+            controller.SetSkillHelper(skillHelper);
         }
 
         public static void SpawnPlayerbots(CharacterMaster owner, SurvivorIndex characterType, int amount)

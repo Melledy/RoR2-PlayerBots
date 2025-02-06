@@ -7,8 +7,8 @@ namespace PlayerBots.AI
 {
     class AiSkillHelperCatalog
     {
-        private static AiSkillHelper DefaultSkillHelper = new DefaultSkillHelper();
-        private static Dictionary<SurvivorIndex, AiSkillHelper> SkillHelperDict = new Dictionary<SurvivorIndex, AiSkillHelper>();
+        private static Type DefaultSkillHelper = typeof(DefaultSkillHelper);
+        private static Dictionary<SurvivorIndex, Type> SkillHelperDict = new Dictionary<SurvivorIndex, Type>();
 
         static AiSkillHelperCatalog()
         {
@@ -22,15 +22,15 @@ namespace PlayerBots.AI
                 var attribs = type.GetCustomAttributes(typeof(SkillHelperSurvivor), false);
                 if (attribs != null && attribs.Length > 0)
                 {
-                    RegisterSkillHelper(Activator.CreateInstance(type) as AiSkillHelper);
+                    RegisterSkillHelper(type);
                 }
             }
         }
 
-        public static void RegisterSkillHelper(AiSkillHelper skillHelper)
+        public static void RegisterSkillHelper(Type skillHelperType)
         {
             SurvivorIndex index = SurvivorIndex.None;
-            SkillHelperSurvivor[] survivorAttributes = skillHelper.GetType().GetCustomAttributes(typeof(SkillHelperSurvivor), false) as SkillHelperSurvivor[];
+            SkillHelperSurvivor[] survivorAttributes = skillHelperType.GetCustomAttributes(typeof(SkillHelperSurvivor), false) as SkillHelperSurvivor[];
 
             if (survivorAttributes.Length > 0)
             {
@@ -68,17 +68,17 @@ namespace PlayerBots.AI
                 return;
             }
 
-            SkillHelperDict.Add(index, skillHelper);
+            SkillHelperDict.Add(index, skillHelperType);
         }
 
-        public static AiSkillHelper GetSkillHelperByIndex(SurvivorIndex index)
+        public static AiSkillHelper CreateSkillHelper(SurvivorIndex index)
         {
-            AiSkillHelper helper;
-            if (!SkillHelperDict.TryGetValue(index, out helper))
+            Type helperType;
+            if (!SkillHelperDict.TryGetValue(index, out helperType))
             {
-                helper = DefaultSkillHelper;
+                helperType = DefaultSkillHelper;
             }
-            return helper;
+            return Activator.CreateInstance(helperType) as AiSkillHelper;
         }
     }
 

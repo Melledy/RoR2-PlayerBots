@@ -5,24 +5,34 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using PlayerBots.AI;
 
 namespace PlayerBots.Custom
 {
-    class PlayerBotCombatFix : MonoBehaviour
+    class PlayerBotController : MonoBehaviour
     {
-        private CharacterMaster master;
-        private CharacterBody body;
-        private EntityStateMachine stateMachine;
-        private BaseAI ai;
-        private Interactor bodyInteractor;
-        private Run.FixedTimeStamp lastEquipmentUse;
-        private Stage currentStage;
+        public CharacterMaster master;
+        public CharacterBody body;
+        public EntityStateMachine stateMachine;
+        public BaseAI ai;
+        public Interactor bodyInteractor;
+        public Run.FixedTimeStamp lastEquipmentUse;
+        public Stage currentStage;
 
         // Cached variables
         private AISkillDriver customTargetSkillDriver;
         private StageCache stageCache;
         private InfiniteTowerRun infiniteTowerRun;
         private int infiniteTowerWave;
+
+        // AI Skill Helper
+        private AiSkillHelper skillHelper;
+
+        public void SetSkillHelper(AiSkillHelper skillHelper)
+        {
+            this.skillHelper = skillHelper;
+            skillHelper.controller = this;
+        }
 
         public void Awake()
         {
@@ -50,23 +60,24 @@ namespace PlayerBots.Custom
 
         public void FixedUpdate()
         {
-            // Fix bunny hopping
-            this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
-            // Skip if no body object
-            if (!this.master.GetBody())
+            // Skip if no body object or if bot is dead
+            if (!this.master.GetBody() || this.master.IsDeadAndOutOfLivesServer())
             {
                 return;
             }
+            // Fix bunny hopping
+            this.ai.localNavigator.SetFieldValue("walkFrustration", 0f);
             // Check if body interactor has changed
             if (this.body != this.master.GetBody())
             {
-                body = master.GetBody();
-                bodyInteractor = master.GetBody().GetComponent<Interactor>();
+                this.body = master.GetBody();
+                this.bodyInteractor = master.GetBody().GetComponent<Interactor>();
+                this.skillHelper.OnBodyChange();
             }
             // Remove the default combat delay with ai
             if (this.stateMachine.state is Combat)
             {
-                ((Combat)this.stateMachine.state).SetFieldValue("aiUpdateTimer", 0);
+                ((Combat) this.stateMachine.state).SetFieldValue("aiUpdateTimer", 0);
             }
             // Infinite tower override (Simulacrum)
             if (infiniteTowerRun)
@@ -112,11 +123,10 @@ namespace PlayerBots.Custom
                     ForceCustomSkillDriver();
                 }
             }
-            // Equipment
-            if (!this.master.IsDeadAndOutOfLivesServer())
-            {
-                ProcessEquipment();
-            }
+            // Check if bot should use equipment
+            ProcessEquipment();
+            // Run skill helper callback
+            this.skillHelper.OnFixedUpdate();
         }
 
         public void InfiniteTowerRunLogic() 

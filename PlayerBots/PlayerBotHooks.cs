@@ -18,7 +18,7 @@ namespace PlayerBots
                 if (self.name.Equals("PlayerBot"))
                 {
                     // Reset player bot state when body is lost so errors dont pop up
-                    self.stateMachine.SetNextState(EntityStateCatalog.InstantiateState(self.scanState));
+                    self.stateMachine.SetNextState(EntityStateCatalog.InstantiateState(ref self.scanState));
                     return;
                 }
                 orig(self, body);
@@ -61,7 +61,7 @@ namespace PlayerBots
             if (!PlayerBotManager.PlayerMode.Value && PlayerBotManager.AutoPurchaseItems.Value)
             {
                 // Give bots money
-                On.RoR2.TeamManager.GiveTeamMoney += (orig, self, teamIndex, money) =>
+                On.RoR2.TeamManager.GiveTeamMoney_TeamIndex_uint += (orig, self, teamIndex, money) =>
                 {
                     orig(self, teamIndex, money);
 
@@ -113,7 +113,7 @@ namespace PlayerBots
 
             On.RoR2.Stage.Start += (orig, self) =>
             {
-                orig(self);
+                var ret = orig(self);
                 if (NetworkServer.active)
                 {
                     if (PlayerBotManager.PlayerMode.Value)
@@ -149,6 +149,7 @@ namespace PlayerBots
                         }
                     }
                 }
+                return ret;
             };
 
             // Fix custom targets
