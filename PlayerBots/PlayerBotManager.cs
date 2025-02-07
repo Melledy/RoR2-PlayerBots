@@ -183,7 +183,7 @@ namespace PlayerBots
                 return;
             }
 
-            // Card
+            // Create spawn card
             PlayerBotSpawnCard card = ScriptableObject.CreateInstance<PlayerBotSpawnCard>();
             card.hullSize = HullClassification.Human;
             card.nodeGraphType = MapNodeGroup.GraphType.Ground;
@@ -192,13 +192,22 @@ namespace PlayerBots
             card.forbiddenFlags = NodeFlags.NoCharacterSpawn;
             card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMaster");
 
+            // Get spawn position
+            Transform spawnPosition = GetRandomSpawnPosition(owner);
+
+            if (spawnPosition == null)
+            {
+                Debug.LogError("No spawn positions found for playerbot");
+                return;
+            }
+
             // Spawn
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
             {
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                 minDistance = 3f,
                 maxDistance = 40f,
-                spawnOnTarget = owner.GetBody().transform
+                spawnOnTarget = spawnPosition
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
@@ -272,7 +281,7 @@ namespace PlayerBots
                 return;
             }
 
-            // Card
+            // Create spawn card
             PlayerBotSpawnCard card = ScriptableObject.CreateInstance<PlayerBotSpawnCard>();
             card.hullSize = HullClassification.Human;
             card.nodeGraphType = MapNodeGroup.GraphType.Ground;
@@ -282,13 +291,22 @@ namespace PlayerBots
             card.prefab = LegacyResourcesAPI.Load<GameObject>("Prefabs/CharacterMasters/CommandoMonsterMaster");
             card.bodyPrefab = bodyPrefab;
 
+            // Get spawn position
+            Transform spawnPosition = GetRandomSpawnPosition(owner);
+
+            if (spawnPosition == null)
+            {
+                Debug.LogError("No spawn positions found for playerbot");
+                return;
+            }
+
             // Spawn request
             DirectorSpawnRequest spawnRequest = new DirectorSpawnRequest(card, new DirectorPlacementRule
             {
                 placementMode = DirectorPlacementRule.PlacementMode.Approximate,
                 minDistance = 3f,
                 maxDistance = 40f,
-                spawnOnTarget = owner.GetBody().transform
+                spawnOnTarget = spawnPosition
             }, RoR2Application.rng);
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
@@ -306,25 +324,15 @@ namespace PlayerBots
                 if (master)
                 {
                     master.name = "PlayerBot";
-                    SetRandomSkin(master, bodyPrefab);
-
                     master.teamIndex = TeamIndex.Player;
+
+                    SetRandomSkin(master, bodyPrefab);
 
                     GiveStartingItems(owner, master);
 
                     // Allow the bots to spawn in the next stage
                     master.destroyOnBodyDeath = false;
                     master.gameObject.AddComponent<SetDontDestroyOnLoad>();
-                }
-                if (ai)
-                {
-                    ai.name = "PlayerBot";
-                    ai.leader.gameObject = owner.GetBody().gameObject;
-
-                    ai.neverRetaliateFriendlies = true;
-                    ai.fullVision = true;
-                    ai.aimVectorDampTime = .01f;
-                    ai.aimVectorMaxSpeed = 180f;
                 }
 
                 InjectSkillDrivers(gameObject, ai, survivorIndex);
@@ -338,6 +346,25 @@ namespace PlayerBots
                 // Add to playerbot list
                 playerbots.Add(gameObject);
             }
+        }
+
+        private static Transform GetRandomSpawnPosition(CharacterMaster owner)
+        {
+            if (owner.GetBody() != null)
+            {
+                return owner.GetBody().transform;
+            }
+            else
+            {
+                SpawnPoint spawnPoint = SpawnPoint.ConsumeSpawnPoint();
+                if (spawnPoint != null)
+                {
+                    spawnPoint.consumed = false;
+                    return spawnPoint.transform;
+                }
+            }
+
+            return null;
         }
 
         private static void GiveStartingItems(CharacterMaster owner, CharacterMaster master)
@@ -383,6 +410,16 @@ namespace PlayerBots
             {
                 // Add leash skills
                 skillHelper.AddDefaultSkills(gameObject, ai, 0);
+            }
+
+            // Set BaseAI properties
+            if (ai)
+            {
+                ai.name = "PlayerBot";
+                ai.neverRetaliateFriendlies = true;
+                ai.fullVision = true;
+                ai.aimVectorDampTime = .01f;
+                ai.aimVectorMaxSpeed = 180f;
             }
 
             // Add playerbot controller for extra behaviors and fixes
