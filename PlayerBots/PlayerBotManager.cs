@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace PlayerBots
 {
-    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.7.0")]
+    [BepInPlugin("com.meledy.PlayerBots", "PlayerBots", "1.7.1")]
     public class PlayerBotManager : BaseUnityPlugin
     {
         public static System.Random random = new System.Random();
