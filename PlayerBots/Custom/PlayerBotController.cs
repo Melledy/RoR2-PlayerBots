@@ -28,6 +28,14 @@ namespace PlayerBots.Custom
         // AI Skill Helper
         private AiSkillHelper skillHelper;
 
+        //
+        private static HashSet<ItemTier> ignoredItemTiers = new HashSet<ItemTier>() { 
+            ItemTier.Lunar, 
+            ItemTier.VoidTier1, 
+            ItemTier.VoidTier2, 
+            ItemTier.VoidTier3
+        };
+
         public void SetSkillHelper(AiSkillHelper skillHelper)
         {
             this.skillHelper = skillHelper;
@@ -175,7 +183,7 @@ namespace PlayerBots.Custom
 
                 // Skip these
                 ItemDef def = ItemCatalog.GetItemDef(PickupCatalog.GetPickupDef(pickup.pickupIndex).itemIndex);
-                if (def != null && def.tier == ItemTier.Lunar)
+                if (def != null && ignoredItemTiers.Contains(def.tier))
                 {
                     continue;
                 }
