@@ -216,49 +216,59 @@ namespace PlayerBots
             {
                 GameObject gameObject = result.spawnedInstance;
 
-                if (gameObject)
+                if (gameObject == null)
                 {
-                    // Add components
-                    EntityStateMachine stateMachine = gameObject.AddComponent<PlayerBotStateMachine>() as EntityStateMachine;
-                    BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
-                    AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
-                    aiOwnership.ownerMaster = owner;
-
-                    CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
-                    PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
-                    playerMaster.name = "PlayerBot";
-
-                    // Required to bypass entitlements
-                    master.bodyPrefab = bodyPrefab;
-                    master.Respawn(master.transform.position, master.transform.rotation);
-
-                    // Random skin
-                    SetRandomSkin(master, bodyPrefab);
-
-                    // Set commponent values
-                    master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
-                    master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
-
-                    // Starting items
-                    GiveStartingItems(owner, master);
-
-                    // Add custom skills
-                    InjectSkillDrivers(gameObject, ai, survivorIndex);
-
-                    if (AutoPurchaseItems.Value)
-                    {
-                        // Add item manager
-                        ItemManager itemManager = gameObject.AddComponent<ItemManager>() as ItemManager;
-                    }
-
-                    // Add to playerbot list
-                    playerbots.Add(gameObject);
+                    return;
                 }
+
+                // Add components
+                EntityStateMachine stateMachine = gameObject.AddComponent<PlayerBotStateMachine>() as EntityStateMachine;
+                BaseAI ai = gameObject.AddComponent<PlayerBotBaseAI>() as BaseAI;
+                AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
+                aiOwnership.ownerMaster = owner;
+
+                CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
+                PlayerCharacterMasterController playerMaster = gameObject.GetComponent<PlayerCharacterMasterController>();
+                playerMaster.name = "PlayerBot";
+
+                // Required to bypass entitlements
+                master.bodyPrefab = bodyPrefab;
+                master.Respawn(master.transform.position, master.transform.rotation);
+
+                // Random skin
+                SetRandomSkin(master, bodyPrefab);
+
+                // Set commponent values
+                master.SetFieldValue("aiComponents", gameObject.GetComponents<BaseAI>());
+                master.destroyOnBodyDeath = false; // Allow the bots to spawn in the next stage
+
+                // Starting items
+                GiveStartingItems(owner, master);
+
+                // Add custom skills
+                InjectSkillDrivers(gameObject, ai, survivorIndex);
+
+                if (AutoPurchaseItems.Value)
+                {
+                    // Add item manager
+                    ItemManager itemManager = gameObject.AddComponent<ItemManager>() as ItemManager;
+                }
+
+                // Add to playerbot list
+                playerbots.Add(gameObject);
             };
 
-            DirectorCore.instance.TrySpawnObject(spawnRequest);
+            // Don't freeze the game if there is an error spawning the bot
+            try 
+            {
+                DirectorCore.instance.TrySpawnObject(spawnRequest);
+            }
+            catch (Exception e) 
+            { 
+                Debug.LogError(e);
+            }
 
-            // Cleanup
+            // Cleanup spawn card
             Destroy(card);
         }
 
@@ -311,11 +321,15 @@ namespace PlayerBots
             spawnRequest.ignoreTeamMemberLimit = true;
             spawnRequest.teamIndexOverride = new TeamIndex?(TeamIndex.Player);
 
-            // Spawn
-            GameObject gameObject = DirectorCore.instance.TrySpawnObject(spawnRequest);
-
-            if (gameObject)
+            spawnRequest.onSpawnedServer = result =>
             {
+                GameObject gameObject = result.spawnedInstance;
+
+                if (gameObject == null)
+                {
+                    return;
+                }
+
                 CharacterMaster master = gameObject.GetComponent<CharacterMaster>();
                 BaseAI ai = gameObject.GetComponent<BaseAI>();
                 AIOwnership aiOwnership = gameObject.AddComponent<AIOwnership>() as AIOwnership;
@@ -345,7 +359,20 @@ namespace PlayerBots
 
                 // Add to playerbot list
                 playerbots.Add(gameObject);
+            };
+
+            // Don't freeze the game if there is an error spawning the bot
+            try
+            {
+                DirectorCore.instance.TrySpawnObject(spawnRequest);
             }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+
+            // Cleanup spawn card
+            Destroy(card);
         }
 
         private static Transform GetRandomSpawnPosition(CharacterMaster owner)
